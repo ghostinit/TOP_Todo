@@ -19,7 +19,7 @@ export default class Task {
 
     static priorityNames = ['None', 'Low', 'Medium', 'High', 'Critical'];
 
-    constructor(title, description = "No Description Added", hasDueDate = false, dueDate = null, priority = Task.priorityValues.none, notes = "", checklist = []) {
+    constructor(title, description = "", hasDueDate = false, dueDate = null, priority = Task.priorityValues.none, notes = "", checklist = []) {
         this.#id = crypto.randomUUID();
         this.#title = title;
         this.#complete = false;
@@ -30,6 +30,17 @@ export default class Task {
         this.#notes = notes;
         this.#checklist = checklist;
     }
+
+    // =================== STATIC METHODS
+    static getNewTask(title, description = "", hasDueDate = false, dueDate = null, priority = Task.priorityValues.none, notes = "", checklist = []) {
+        return new Task(title, description, hasDueDate, dueDate, priority, notes, checklist);
+    }
+
+    static getNewVanillaTask(title) {
+        return new Task(title);
+    }
+
+    // ==================== PUBLIC METHODS
 
     getId() {
         return this.#id;
@@ -49,6 +60,8 @@ export default class Task {
             checklist: this.#checklist
         }
     }
+
+
 
     markComplete() {
         this.#complete = true;
