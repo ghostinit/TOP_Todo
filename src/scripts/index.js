@@ -1,4 +1,5 @@
 import "/src/css/reset.css";
+import "/src/css/variables.css";
 import "/src/css/layout.css";
 import "/src/css/styles.css";
 
@@ -7,10 +8,11 @@ import bg_image from "/src/images/background.jpg";
 // index.js
 import { greeting } from "./greeting.js";
 
-import Project from "./project.js";
-import Task from "./task.js";
+import { load as loadStorage } from "./storageManager.js";
 
 console.log(greeting);
+
+loadStorage();
 
 // const myProject = Project.getNewProject("My Project");
 

@@ -1,0 +1,6 @@
+:root {
+    --background-color: rgb(43, 43, 43);
+    --font-color: #dddddd;
+    --content-header-height: 48px;
+    --add-item-btn-height: 40px;
+}

@@ -7,6 +7,30 @@
     font-display: swap;
 }
 
+
+
+html {
+    background-color: var(--background-color);
+    color: var(--font-color);
+}
+
 div {
-    border: 1px solid black;
+    border: 1px solid var(--font-color);
+}
+
+header h1,
+#project-header,
+#task-header {
+    user-select: none;
+}
+
+#btn-add-project,
+#btn-add-task {
+    transition: 0.2s ease;
+}
+
+#btn-add-project:hover,
+#btn-add-task:hover {
+    cursor: pointer;
+    transform: scale(1.15);
 }

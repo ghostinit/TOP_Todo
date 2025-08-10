@@ -18,7 +18,27 @@ main {
 }
 
 #project-content {
+    display: flex;
+    flex-direction: column;
     flex: 2;
+}
+
+#project-content-header,
+#task-content-header {
+    display: flex;
+    height: var(--content-header-height);
+    align-items: center;
+}
+
+#project-header,
+#task-header {
+    margin-inline-end: auto;
+    margin-inline-start: 10px;
+}
+
+.btn-add-item {
+    height: var(--add-item-btn-height);
+    margin-inline-end: 10px;
 }
 
 #task-content {
