@@ -7,6 +7,9 @@ import bg_image from "/src/images/background.jpg";
 
 // index.js
 import { greeting } from "./greeting.js";
+import { Manager as manager } from "./UIManager.js";
+
+manager.init();
 
 console.log(greeting);
 
