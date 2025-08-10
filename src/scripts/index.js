@@ -8,11 +8,8 @@ import bg_image from "/src/images/background.jpg";
 // index.js
 import { greeting } from "./greeting.js";
 
-import { load as loadStorage } from "./storageManager.js";
-
 console.log(greeting);
 
-loadStorage();
 
 // const myProject = Project.getNewProject("My Project");
 
