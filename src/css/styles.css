@@ -7,11 +7,6 @@
     font-display: swap;
 }
 
-body {
-    background-color: rebeccapurple;
-}
-
-h1 {
-    color: orange;
-    font-family: 'Fruktur';
+div {
+    border: 1px solid black;
 }
