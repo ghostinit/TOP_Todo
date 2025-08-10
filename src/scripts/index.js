@@ -6,13 +6,23 @@ import bg_image from "/src/images/background.jpg";
 // index.js
 import { greeting } from "./greeting.js";
 
+import Project from "./project.js";
 import Task from "./task.js";
 
 console.log(greeting);
 
-const myTask = Task.getNewVanillaTask("Vanilla Task")
+const myProject = Project.getNewProject("My Project");
 
-console.log(myTask.getTaskInfo())
+for (let i = 0; i < 5; i++) {
+    const newTask = Task.getNewVanillaTask(`Task: ${i}`);
+    myProject.addTask(newTask);
+}
+
+const taskToRemove = myProject.getTaskByIndex(3);
+
+myProject.removeTask(taskToRemove);
+
+console.log(myProject.getProjectInfo());
 
 
 const body = document.querySelector('body');
