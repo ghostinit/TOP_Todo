@@ -30,7 +30,17 @@ export function checkStorage() {
 }
 
 export function loadSavedData(storageKey) {
-    return localStorage.getItem(storageKey);
+    console.log(`Storage length: ${localStorage.length}`)
+    console.log(`Fetching data with key: ${storageKey}`);
+    const data = localStorage.getItem(storageKey);
+    console.log(`Saved data: ${data}`);
+    return data
+}
+
+export function saveData(storageKey, data) {
+    console.log(`Saving: ${storageKey} with data: ${data}`);
+    localStorage.setItem(storageKey, data);
+    console.log(`Storage length: ${localStorage.length}`);
 }
 
 // export function load() {
