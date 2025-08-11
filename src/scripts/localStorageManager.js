@@ -29,6 +29,10 @@ export function checkStorage() {
     }
 }
 
+export function loadSavedData(storageKey) {
+    return localStorage.getItem(storageKey);
+}
+
 // export function load() {
 //     if (storageAvailable("localStorage")) {
 //         console.log("Storage is available");
