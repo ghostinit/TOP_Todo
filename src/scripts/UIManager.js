@@ -36,7 +36,6 @@ const Manager = (
 
                 projectListContainer.appendChild(listItem);
                 listItem.addEventListener('click', (event) => {
-                    // event.target.classList.add('selected-project');
                     updateSelectedProject(event.target.id);
                 })
             }

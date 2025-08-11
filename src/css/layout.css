@@ -95,3 +95,59 @@ main {
 #project-info-desc {
     padding-inline-start: 10px;
 }
+
+/* TASK CARD LAYOUT */
+.task-item {
+    display: grid;
+    grid-template-columns: 48px 6fr 1fr 3fr 2fr;
+    grid-template-rows: 30px 30px 1fr;
+}
+
+.task-item-checkbox-container {
+    grid-area: 1 / 1 / 3 / 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.task-item-checkbox {
+    height: 30px;
+    width: 30px;
+}
+
+.task-title {
+    grid-area: 1 / 2 / 2 / 4;
+}
+
+.task-desc {
+    grid-area: 2 / 2 / 3 / 4;
+}
+
+.task-due-date {
+    grid-area: 1 / 4 / 3 / 4;
+}
+
+.task-priority {
+    grid-area: 1 / 5 / 3 / 6;
+}
+
+.task-notes {
+    grid-area: 3 / 1 / 4 / 3;
+}
+
+.task-checklist {
+    grid-area: 3 / 3 / 4 / 6;
+}
+
+.task-checklist-item {
+    display: flex;
+}
+
+.task-checklist-item-checkbox {
+    width: 30px;
+    height: 30px;
+}
+
+.task-checklist-item-title {
+    padding-inline-end: auto;
+}
