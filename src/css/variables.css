@@ -3,4 +3,7 @@
     --font-color: #dddddd;
     --content-header-height: 48px;
     --add-item-btn-height: 40px;
+
+    --list-item-hover-background: rgb(55, 55, 55);
+    --selected-project-background: rgb(0, 100, 255);
 }

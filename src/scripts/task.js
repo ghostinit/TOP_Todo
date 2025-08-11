@@ -19,8 +19,12 @@ export default class Task {
 
     static priorityNames = ['None', 'Low', 'Medium', 'High', 'Critical'];
 
-    constructor(title, description = "", hasDueDate = false, dueDate = null, priority = Task.priorityValues.none, notes = "", checklist = []) {
-        this.#id = crypto.randomUUID();
+    constructor(title, description = "", hasDueDate = false, dueDate = null, priority = Task.priorityValues.none, notes = "", checklist = [], id = null) {
+        if (id === null) {
+            this.#id = crypto.randomUUID();
+        } else {
+            this.#id = id;
+        }
         this.#title = title;
         this.#complete = false;
         this.#description = description;
@@ -32,6 +36,19 @@ export default class Task {
     }
 
     // =================== STATIC METHODS
+    static getTaskFromObject(obj) {
+        return new Task(
+            obj.title,
+            obj.description,
+            obj.hasDueDate,
+            obj.dueDate,
+            obj.priority,
+            obj.notes,
+            obj.checklist,
+            obj.id
+        )
+    }
+
     static getNewTask(title, description = "", hasDueDate = false, dueDate = null, priority = Task.priorityValues.none, notes = "", checklist = []) {
         return new Task(title, description, hasDueDate, dueDate, priority, notes, checklist);
     }

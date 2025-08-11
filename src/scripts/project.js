@@ -6,14 +6,33 @@ export default class Project {
     #description;
     #tasks;
 
-    constructor(title, description = "") {
-        this.#id = crypto.randomUUID();
+    constructor(title, description = "", id = null) {
+        if (id === null) {
+            this.#id = crypto.randomUUID();
+        } else {
+            this.#id = id;
+        }
+
         this.#title = title;
         this.#description = description;
         this.#tasks = [];
     }
 
     // ================ STATIC METHODS
+    static getProjectFromObject(obj) {
+        let project = new Project(
+            obj.title,
+            obj.description,
+            obj.id
+        )
+
+        for (let task of obj.tasks) {
+            const newTask = Task.getTaskFromObject(task);
+            project.addTask(newTask);
+        }
+        return project;
+    }
+
     static getNewProject(title, description = "") {
         return new Project(title, description);
     }
@@ -28,10 +47,6 @@ export default class Project {
         return this.#id;
     }
 
-    getTaskByIndex(index) {
-        return this.#tasks[index];
-    }
-
     getProjectInfo() {
         let taskInfo = []
         for (let task of this.#tasks) {
@@ -44,6 +59,24 @@ export default class Project {
             description: this.#description,
             tasks: taskInfo,
         }
+    }
+
+    getTitleAndId() {
+        return {
+            title: this.#title,
+            id: this.#id
+        }
+    }
+
+    getTitleAndDesc() {
+        return {
+            title: this.#title,
+            description: this.#description
+        }
+    }
+
+    getTaskByIndex(index) {
+        return this.#tasks[index];
     }
 
     removeTask(task) {

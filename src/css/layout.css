@@ -17,6 +17,7 @@ main {
     min-height: 0;
 }
 
+
 #project-content {
     display: flex;
     flex-direction: column;
@@ -43,4 +44,54 @@ main {
 
 #task-content {
     flex: 8;
+}
+
+/* Project List layout */
+#project-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-block-start: 10px;
+}
+
+/* Task area layout */
+#project-info-container {
+    display: grid;
+    grid-template-rows: 30px 30px;
+    grid-template-columns: 1fr 60px 60px;
+}
+
+#project-info-name {
+    grid-area: 1 / 1 / 1 / 1;
+}
+
+#project-info-desc {
+    grid-area: 2 / 1 / 3 / 2;
+}
+
+#project-edit {
+    grid-area: 1 / 2 / 3 / 3;
+}
+
+#project-delete {
+    grid-area: 1 / 3 / 3 / 4;
+}
+
+#project-edit,
+#project-delete {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#btn-project-edit,
+#btn-project-delete {
+    width: 32px;
+    height: 32px;
+    transition: 0.2s ease;
+}
+
+#project-info-name,
+#project-info-desc {
+    padding-inline-start: 10px;
 }

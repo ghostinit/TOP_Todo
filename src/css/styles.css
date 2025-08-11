@@ -20,7 +20,9 @@ div {
 
 header h1,
 #project-header,
-#task-header {
+#task-header,
+#project-info-name,
+#project-info-desc {
     user-select: none;
 }
 
@@ -33,4 +35,44 @@ header h1,
 #btn-add-task:hover {
     cursor: pointer;
     transform: scale(1.15);
+}
+
+#btn-add-project:active,
+#btn-add-task:active {
+    transform: scale(0.95);
+}
+
+/* Project Display */
+.project-list-item {
+    font-size: 1.2em;
+    font-weight: bold;
+    padding-inline-start: 10px;
+    border-radius: 10px;
+    transition: 0.2s ease;
+}
+
+.project-list-item:hover {
+    /* background-color: var(--list-item-hover-background); */
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+.project-list-item:active {
+    transform: scale(0.95);
+}
+
+.selected-project {
+    background-color: var(--selected-project-background);
+}
+
+/* Task display area (includes project control bar) */
+#btn-project-edit:hover,
+#btn-project-delete:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+#btn-project-edit:active,
+#btn-project-delete:active {
+    transform: scale(0.95);
 }

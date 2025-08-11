@@ -71,29 +71,79 @@ const DataManager = (
                 ]
             }
         ]
+
+        // =================== METHODS ======================
+
+        const buildStarterData = () => {
+            const newProject = Project.getNewProject(starterProjectInfo.title, starterProjectInfo.description);
+            for (const taskInfo of starterTasks) {
+                const newTask = Task.getNewTask(
+                    taskInfo.title,
+                    taskInfo.description,
+                    taskInfo.hasDueDate,
+                    taskInfo.dueDate,
+                    taskInfo.priority,
+                    taskInfo.notes,
+                    taskInfo.checklist
+                );
+                newProject.addTask(newTask);
+            }
+            user_data.push(newProject);
+        }
+
         const fetchStoredData = () => {
             // Check if local storage is even available
             let data = {};
             const storageEnabled = checkStorage();
             if (storageEnabled) {
+                // console.log('Storage Enabled');
                 // Check if anything has previous been saved
                 data = loadSavedData(storageKey);
                 if (data === null) {
-                    console.log("No data found, building starter pack");
-                    const starterProject = buildStarterData();
-                    user_data.push(starterProject);
+                    // console.log("No data found, building starter pack");
+                    buildStarterData();
                     saveUserData();
                 } else {
                     console.log("Stored Data Found");
                     //load the data
                     // data should contain the user_data is JSON form
+                    const userObj = JSON.parse(data);
+                    for (let obj of userObj) {
+                        // console.log(`Building project from: `, obj);
+                        const project = Project.getProjectFromObject(obj);
+                        user_data.push(project);
+                    }
                 }
             } else {
                 // Unable to save locally, return starter project anyway
-                const starterProject = buildStarterData();
-                user_data.push(starterProject);
+                buildStarterData();
             }
-            return user_data;
+            // console.log(`Post build data: `, user_data)
+            // return user_data;
+        }
+
+        const getProjectIdxById = (projectId) => {
+            const idx = user_data.findIndex((project) => {
+                return project.getId() === projectId;
+            });
+            return idx;
+        }
+
+        const getProjectIdByIdx = (projectIdx) => {
+            return user_data[projectIdx].getId();
+        }
+
+        const getProjectTitlesAndIds = () => {
+            let projectsInfo = [];
+            // console.log(`User data: `, user_data);
+            for (let project of user_data) {
+                projectsInfo.push(project.getTitleAndId());
+            }
+            return projectsInfo;
+        }
+
+        const getProjectTitleAndDescByIdx = (idx) => {
+            return user_data[idx].getTitleAndDesc();
         }
 
         const saveUserData = () => {
@@ -111,26 +161,17 @@ const DataManager = (
             }
         }
 
-        const buildStarterData = () => {
-            const newProject = Project.getNewProject(starterProjectInfo.title, starterProjectInfo.description);
-            for (const taskInfo of starterTasks) {
-                const newTask = Task.getNewTask(
-                    taskInfo.title,
-                    taskInfo.description,
-                    taskInfo.hasDueDate,
-                    taskInfo.dueDate,
-                    taskInfo.priority,
-                    taskInfo.notes,
-                    taskInfo.checklist
-                );
-                newProject.addTask(newTask);
-            }
-            return newProject;
-        }
+
+
+
 
         return {
+            buildStarterData,
             fetchStoredData,
-
+            getProjectIdByIdx,
+            getProjectIdxById,
+            getProjectTitleAndDescByIdx,
+            getProjectTitlesAndIds,
         }
     }
 )();
