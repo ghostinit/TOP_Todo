@@ -14,16 +14,27 @@ html {
     color: var(--font-color);
 }
 
-div {
+/* div {
     border: 1px solid var(--font-color);
-}
+} */
 
 header h1,
 #project-header,
 #task-header,
 #project-info-name,
-#project-info-desc {
+#project-info-desc,
+.task-title-header,
+.task-desc,
+.task-due-date-label,
+.task-due-date-info,
+.task-priority-info,
+.task-notes {
     user-select: none;
+}
+
+#project-content,
+#task-content {
+    border: 1px solid var(--font-color);
 }
 
 #btn-add-project,
@@ -41,6 +52,8 @@ header h1,
 #btn-add-task:active {
     transform: scale(0.95);
 }
+
+
 
 /* Project Display */
 .project-list-item {
@@ -75,4 +88,33 @@ header h1,
 #btn-project-edit:active,
 #btn-project-delete:active {
     transform: scale(0.95);
+}
+
+.btn-task-sort {
+    background-color: var(--background-color);
+    color: var(--font-color);
+    border: 1px solid var(--font-color);
+    padding-block: 3px;
+    padding-inline: 15px;
+    border-radius: 20px;
+    transition: 0.2s ease;
+}
+
+.btn-task-sort:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.btn-task-sort:active {
+    transform: scale(0.9);
+}
+
+.task-sort-active {
+    background-color: #008f8f;
+    color: #000000;
+}
+
+.task-item {
+    border: 1px solid var(--font-color);
+    border-radius: 10px;
 }

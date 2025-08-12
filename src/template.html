@@ -31,10 +31,22 @@
                 <div id="project-delete">
                     <img src="/src/assets/icons/trash-can-outline.svg" alt="Delete Project" id="btn-project-delete">
                 </div>
+
             </div>
-            <div id="task-content-header">
-                <h4 id="task-header">Tasks</h2>
-                    <img src="/src/assets/icons/plus.svg" alt="Add task button" id="btn-add-task" class="btn-add-item">
+            <div id="task-control-header">
+                <div id="task-content-header">
+                    <h4 id="task-header">Tasks</h2>
+                        <img src="/src/assets/icons/plus.svg" alt="Add task button" id="btn-add-task"
+                            class="btn-add-item">
+                </div>
+                <div id="task-sort-header">
+                    <h4 id="task-sort-title">Sort By</h4>
+                    <div id="task-sort-buttons">
+                        <button class="btn-task-sort task-sort-active" id="btn-task-sort-none">None</button>
+                        <button class="btn-task-sort" id="btn-task-sort-duedate">Due Date</button>
+                        <button class="btn-task-sort" id="btn-task-sort-priority">Priority</button>
+                    </div>
+                </div>
             </div>
             <div id="task-list">
                 <div class="task-item">
@@ -44,30 +56,26 @@
                     </div>
 
                     <div class="task-title">
-                        <h3>New Task</h3>
+                        <h3 class="task-title-header">New Task</h3>
                     </div>
                     <div class="task-desc">Get this done ASAP</div>
-                    <div class="task-due-date">No Due Date</div>
-                    <div class="task-priority">High</div>
+                    <div class="task-due-date">
+                        <div class="task-due-date-label">11/4/2025</div>
+                        <div class="task-due-date-info">Due in 234 Days</div>
+                    </div>
+                    <div class="task-priority">
+                        <div class="task-priority-info">High</div>
+                    </div>
                     <div class="task-notes">Some important task notes</div>
-                    <div class="task-checklist">
-                        <div class="task-checklist-item">
-                            <img src="/src/assets/icons/checkbox-blank-outline.svg" alt="Task checklist item checkbox"
-                                class="task-checklist-item-checkbox">
-                            <div class="task-checklist-item-title">Get This Done</div>
+                    <div class="task-control">
+                        <div class="task-edit">
+                            <img src="/src/assets/icons/pencil.svg" alt="Task edit button" class="btn-task-edit">
                         </div>
-                        <div class="task-checklist-item">
-                            <img src="/src/assets/icons/checkbox-blank-outline.svg" alt="Task checklist item checkbox"
-                                class="task-checklist-item-checkbox">
-                            <div class="task-checklist-item-title">Get This Done</div>
+                        <div class="task-delete">
+                            <img src="/src/assets/icons/trash-can-outline.svg" alt="Task delete button"
+                                class="btn-task-delete">
                         </div>
-                        <div class="task-checklist-item">
-                            <div class="task-checklist-item-checkbox-container">
-                                <img src="/src/assets/icons/checkbox-blank-outline.svg"
-                                    alt="Task checklist item checkbox" class="task-checklist-item-checkbox">
-                            </div>
-                            <div class="task-checklist-item-title">Get This Done, like right now!</div>
-                        </div>
+
                     </div>
                 </div>
             </div>

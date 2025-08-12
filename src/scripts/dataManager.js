@@ -82,7 +82,7 @@ const DataManager = (
                     taskInfo.description,
                     taskInfo.hasDueDate,
                     taskInfo.dueDate,
-                    taskInfo.priority,
+                    taskInfo.priorityValue,
                     taskInfo.notes,
                     taskInfo.checklist
                 );
@@ -122,6 +122,11 @@ const DataManager = (
             // return user_data;
         }
 
+        const getProjectTasks = (index) => {
+            const tasks = user_data[index].getAllTasks();
+            return tasks;
+        }
+
         const getProjectIdxById = (projectId) => {
             const idx = user_data.findIndex((project) => {
                 return project.getId() === projectId;
@@ -144,6 +149,14 @@ const DataManager = (
 
         const getProjectTitleAndDescByIdx = (idx) => {
             return user_data[idx].getTitleAndDesc();
+        }
+
+        const getTaskPriorityColors = () => {
+            return Task.priorityColors;
+        }
+
+        const getTaskPriorityNames = () => {
+            return Task.priorityNames;
         }
 
         const saveUserData = () => {
@@ -170,8 +183,11 @@ const DataManager = (
             fetchStoredData,
             getProjectIdByIdx,
             getProjectIdxById,
+            getProjectTasks,
             getProjectTitleAndDescByIdx,
             getProjectTitlesAndIds,
+            getTaskPriorityColors,
+            getTaskPriorityNames
         }
     }
 )();

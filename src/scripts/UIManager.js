@@ -1,8 +1,11 @@
 import { DataManager } from "./dataManager";
+import taskTemplate from "../task-template.html";
+import { formatDistanceToNow, compareAsc } from "date-fns";
 
 const Manager = (
     function () {
         let selectedIndex = 0;
+        let taskSort = 'btn-task-sort-none';
 
         const init = () => {
             // Fetch stored data or starter data
@@ -10,6 +13,18 @@ const Manager = (
 
             // Temporarily add another project
             DataManager.buildStarterData();
+
+            const sortButtons = document.querySelectorAll('.btn-task-sort');
+            for (let button of sortButtons) {
+                button.addEventListener('click', (event) => {
+                    taskSort = event.target.id;
+                    for (let btn of sortButtons) {
+                        btn.classList.remove('task-sort-active');
+                    }
+                    event.target.classList.add('task-sort-active');
+                    populateTasks();
+                })
+            }
 
             populateProjects();
             populateTasks();
@@ -49,6 +64,110 @@ const Manager = (
 
             const projectDescEle = document.querySelector('#project-info-desc');
             projectDescEle.innerText = projectInfo.description;
+
+            const taskTemplateElement = document.createElement('template');
+            taskTemplateElement.innerHTML = taskTemplate;
+
+            const taskList = document.querySelector('#task-list');
+            taskList.innerHTML = ""
+
+            let taskInfo = DataManager.getProjectTasks(selectedIndex);
+
+
+
+            const priorityNames = DataManager.getTaskPriorityNames();
+            const priorityColors = DataManager.getTaskPriorityColors();
+
+            // taskInfo[1].dueDate = '08/23/2025';
+
+            let sorted = null;
+            // sorted = taskInfo;
+            if (taskSort === 'btn-task-sort-none') {
+                sorted = taskInfo;
+            } else if (taskSort === 'btn-task-sort-duedate') {
+                const noDueDate = taskInfo.filter((task) => {
+                    return (!task.hasDueDate);
+                })
+                const dueDateSorted = taskInfo.filter((task) => {
+                    return (task.hasDueDate)
+                }).sort((a, b) => {
+                    return ((new Date(a.dueDate)) - (new Date(b.dueDate)))
+                });
+                sorted = noDueDate.concat(dueDateSorted);
+            } else if (taskSort === 'btn-task-sort-priority') {
+                sorted = taskInfo.sort((a, b) => {
+                    return b.priorityValue - a.priorityValue
+                })
+            }
+
+            for (const task of sorted) {
+                const node = taskTemplateElement.content.cloneNode(true);
+
+                const item = node.querySelector('.task-item');
+                item.id = task.id;
+
+                const title = node.querySelector('.task-title-header');
+                title.innerText = task.title;
+
+                const desc = node.querySelector('.task-desc');
+                desc.innerText = task.description;
+
+                const notes = node.querySelector('.task-notes');
+                notes.innerText = task.notes;
+
+                const priority = node.querySelector('.task-priority-info');
+                priority.innerText = priorityNames[task.priorityValue];
+                priority.style.border = `1px solid ${priorityColors[task.priorityValue].border}`;
+                priority.style.backgroundColor = `${priorityColors[task.priorityValue].background}`;
+                priority.style.color = `${priorityColors[task.priorityValue].font}`;
+
+                const dueDateLabel = node.querySelector('.task-due-date-label');
+                const dueDateInfo = node.querySelector('.task-due-date-info');
+
+                const hasDueDate = task.hasDueDate;
+                if (hasDueDate) {
+                    const taskDueDate = task.dueDate;
+                    dueDateLabel.innerText = `Due ${taskDueDate}`;
+
+                    const dateObj = new Date(taskDueDate);
+                    const distance = formatDistanceToNow(dateObj);
+                    const now = new Date();
+                    const sameDay = isSameDay(dateObj, now);
+                    if (sameDay) {
+                        dueDateInfo.innerText = "Due Today";
+                        dueDateLabel.style.backgroundColor = '#ffa600ff';
+                        dueDateLabel.style.color = '#000000';
+                        dueDateInfo.style.backgroundColor = '#ffa600ff';
+                        dueDateInfo.style.color = '#000000';
+                    } else {
+                        const compare = compareAsc(dateObj, now);
+                        if (compare === -1) {
+                            dueDateInfo.innerText = `Overdue by ${distance}`;
+                            dueDateLabel.style.backgroundColor = '#FF0000'
+                            dueDateLabel.style.color = '#000000';
+                            dueDateInfo.style.backgroundColor = '#FF0000';
+                            dueDateInfo.style.color = '#000000';
+                        } else if (compare === 1) {
+                            dueDateInfo.innerText = `Due in ${distance}`;
+                            dueDateLabel.style.backgroundColor = '#51ff00ff'
+                            dueDateLabel.style.color = '#000000';
+                            dueDateInfo.style.backgroundColor = '#51ff00ff'
+                            dueDateInfo.style.color = '#000000';
+                        }
+                    }
+                } else {
+                    dueDateLabel.innerText = "No Due Date";
+                    dueDateInfo.innerText = "";
+                    dueDateLabel.style.border = '1px solid var(--font-color)';
+                }
+
+
+
+                taskList.appendChild(node);
+            }
+
+
+
         }
 
         const updateSelectedProject = (projectId) => {
@@ -58,6 +177,12 @@ const Manager = (
                 document.getElementById(oldProjectId).classList.remove('selected-project');
                 selectedIndex = DataManager.getProjectIdxById(projectId);
             }
+        }
+
+        const isSameDay = (date1, date2) => {
+            return date1.getFullYear() === date2.getFullYear() &&
+                date1.getMonth() === date2.getMonth() &&
+                date1.getDate() === date2.getDate();
         }
 
         return {

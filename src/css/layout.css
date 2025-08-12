@@ -32,9 +32,27 @@ main {
 }
 
 #project-header,
-#task-header {
+#task-header,
+#task-sort-title {
     margin-inline-end: auto;
     margin-inline-start: 10px;
+}
+
+#task-control-header {
+    display: flex;
+    flex-direction: column;
+}
+
+#task-sort-header {
+    display: flex;
+    flex-direction: column;
+}
+
+#task-sort-buttons {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-block: 15px;
 }
 
 .btn-add-item {
@@ -97,10 +115,17 @@ main {
 }
 
 /* TASK CARD LAYOUT */
+#task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
 .task-item {
     display: grid;
     grid-template-columns: 48px 6fr 1fr 3fr 2fr;
-    grid-template-rows: 30px 30px 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    margin-inline: 10px;
 }
 
 .task-item-checkbox-container {
@@ -117,6 +142,8 @@ main {
 
 .task-title {
     grid-area: 1 / 2 / 2 / 4;
+    display: flex;
+    align-items: end;
 }
 
 .task-desc {
@@ -125,29 +152,60 @@ main {
 
 .task-due-date {
     grid-area: 1 / 4 / 3 / 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
 }
+
+.task-due-date-label,
+.task-due-date-info,
+.task-priority-info {
+    padding-block: 2px;
+    padding-inline: 7px;
+    border-radius: 10px;
+}
+
 
 .task-priority {
     grid-area: 1 / 5 / 3 / 6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .task-notes {
-    grid-area: 3 / 1 / 4 / 3;
+    grid-area: 3 / 1 / 4 / 5;
+    margin-inline-start: 10px;
 }
 
-.task-checklist {
-    grid-area: 3 / 3 / 4 / 6;
-}
-
-.task-checklist-item {
+.task-control {
+    grid-area: 3 / 5 / 4 / 6;
     display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
 }
 
-.task-checklist-item-checkbox {
-    width: 30px;
-    height: 30px;
+.btn-task-edit,
+.btn-task-delete {
+    width: 32px;
+    height: 32px;
+    transition: 0.2s ease;
 }
 
-.task-checklist-item-title {
-    padding-inline-end: auto;
+.btn-task-edit:hover,
+.btn-task-delete:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.btn-task-edit:active,
+.btn-task-delete:active {
+    transform: scale(0.9);
+}
+
+.task-delete {
+    margin-inline-end: 10px;
 }

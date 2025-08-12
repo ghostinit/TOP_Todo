@@ -43,6 +43,15 @@ export default class Project {
         this.#tasks.push(task);
     }
 
+    getAllTasks() {
+        let tasksArray = [];
+        for (const task of this.#tasks) {
+            const info = task.getTaskInfo();
+            tasksArray.push(info);
+        }
+        return tasksArray;
+    }
+
     getId() {
         return this.#id;
     }
