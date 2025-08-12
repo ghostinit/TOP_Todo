@@ -90,6 +90,19 @@ header h1,
     transform: scale(0.95);
 }
 
+.task-item-checkbox {
+    transition: 0.2s ease;
+}
+
+.task-item-checkbox:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.task-item-checkbox:active {
+    transform: scale(0.9);
+}
+
 .btn-task-sort {
     background-color: var(--background-color);
     color: var(--font-color);

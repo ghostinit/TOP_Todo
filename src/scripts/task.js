@@ -1,3 +1,5 @@
+import { formatDistanceToNow, compareAsc } from "date-fns";
+
 export default class Task {
     #id;
     #title;
@@ -7,7 +9,6 @@ export default class Task {
     #dueDate;
     #priority;
     #notes;
-    #checklist;
 
     static priorityValues = {
         none: 0,
@@ -45,8 +46,22 @@ export default class Task {
             font: '#2b2b2b'
         }
     ]
+    static dueDateColors = {
+        upcoming: {
+            background: 'green',
+            font: 'black'
+        },
+        today: {
+            background: 'orange',
+            font: 'black'
+        },
+        overdue: {
+            background: 'red',
+            font: 'black'
+        }
+    }
 
-    constructor(title, description = "", hasDueDate = false, dueDate = null, priority = Task.priorityValues.none, notes = "", checklist = [], id = null, complete = false) {
+    constructor(title, id = null, complete = false, description = "", hasDueDate = false, dueDate = null, priority = Task.priorityValues.none, notes = "") {
         if (id === null) {
             this.#id = crypto.randomUUID();
         } else {
@@ -59,26 +74,25 @@ export default class Task {
         this.#dueDate = dueDate;
         this.#priority = priority;
         this.#notes = notes;
-        this.#checklist = checklist;
     }
 
     // =================== STATIC METHODS
     static getTaskFromObject(obj) {
+        // console.log(obj);
         return new Task(
             obj.title,
+            obj.id,
+            obj.complete,
             obj.description,
             obj.hasDueDate,
             obj.dueDate,
             obj.priorityValue,
-            obj.notes,
-            obj.checklist,
-            obj.id,
-            obj.complete
+            obj.notes
         )
     }
 
-    static getNewTask(title, description = "", hasDueDate = false, dueDate = null, priority = Task.priorityValues.none, notes = "", checklist = []) {
-        return new Task(title, description, hasDueDate, dueDate, priority, notes, checklist);
+    static getNewTask(title, id = null, complete = false, description = "", hasDueDate = false, dueDate = null, priority = Task.priorityValues.none, notes = "") {
+        return new Task(title, id, complete, description, hasDueDate, dueDate, priority, notes);
     }
 
     static getNewVanillaTask(title) {
@@ -99,32 +113,8 @@ export default class Task {
             description: this.#description,
             hasDueDate: this.#hasDueDate,
             dueDate: this.#dueDate,
-            priorityValue: this.#priority,
-            priorityName: Task.priorityNames[this.#priority],
-            notes: this.#notes,
-            checklist: this.#checklist
+            priority: this.#priority,
+            notes: this.#notes
         }
     }
-
-
-
-    markComplete() {
-        this.#complete = true;
-    }
-
-    markIncomplete() {
-        this.#complete = false;
-    }
-
-    updateTaskInfo(title, description, hasDueDate, dueDate, priority, notes, checklist) {
-        this.#title = title;
-        this.#description = description;
-        this.#hasDueDate = hasDueDate;
-        this.#dueDate = dueDate;
-        this.#priority = priority;
-        this.#notes = notes;
-        this.#checklist = checklist;
-    }
-
-
 }

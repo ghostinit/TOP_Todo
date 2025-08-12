@@ -56,6 +56,20 @@ export default class Project {
         return this.#id;
     }
 
+    getProjectForSave() {
+        let taskInfo = []
+        for (let task of this.#tasks) {
+            taskInfo.push(task.getTaskInfoForSave());
+        }
+
+        return {
+            id: this.#id,
+            title: this.#title,
+            description: this.#description,
+            tasks: taskInfo,
+        }
+    }
+
     getProjectInfo() {
         let taskInfo = []
         for (let task of this.#tasks) {

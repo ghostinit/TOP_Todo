@@ -27,8 +27,7 @@ const DataManager = (
                 hasDueDate: true,
                 dueDate: format(new Date(), "MM/dd/yyyy"),
                 priority: Task.priorityValues.high,
-                notes: "Get something done!",
-                checklist: []
+                notes: "Get something done!"
             },
             {
                 title: "Create a Task",
@@ -36,8 +35,7 @@ const DataManager = (
                 hasDueDate: true,
                 dueDate: format(new Date(), "MM/dd/yyyy"),
                 priority: Task.priorityValues.medium,
-                notes: "Set your goal",
-                checklist: []
+                notes: "Set your goal"
             },
             {
                 title: "Go for a walk",
@@ -45,30 +43,7 @@ const DataManager = (
                 hasDueDate: false,
                 dueDate: null,
                 priority: Task.priorityValues.none,
-                notes: "Nature is good for the soul",
-                checklist: []
-            },
-            {
-                title: "Buy Yummy Food",
-                description: "A simple shopping list",
-                hasDueDate: false,
-                dueDate: null,
-                priority: Task.priorityValues.low,
-                notes: "Some yummy food!",
-                checklist: [
-                    {
-                        item: "Fruits",
-                        complete: false
-                    },
-                    {
-                        item: "Veggies",
-                        complete: false
-                    },
-                    {
-                        item: "Ice Cream",
-                        complete: false
-                    }
-                ]
+                notes: "Nature is good for the soul"
             }
         ]
 
@@ -79,13 +54,15 @@ const DataManager = (
             for (const taskInfo of starterTasks) {
                 const newTask = Task.getNewTask(
                     taskInfo.title,
+                    null, // Id
+                    false, // complete
                     taskInfo.description,
                     taskInfo.hasDueDate,
                     taskInfo.dueDate,
-                    taskInfo.priorityValue,
-                    taskInfo.notes,
-                    taskInfo.checklist
+                    taskInfo.priority,
+                    taskInfo.notes
                 );
+                console.log(newTask);
                 newProject.addTask(newTask);
             }
             user_data.push(newProject);
@@ -94,6 +71,8 @@ const DataManager = (
         const fetchStoredData = () => {
             // Check if local storage is even available
             let data = {};
+            buildStarterData();
+            saveUserData();
             const storageEnabled = checkStorage();
             if (storageEnabled) {
                 // console.log('Storage Enabled');
@@ -159,6 +138,10 @@ const DataManager = (
             return Task.priorityNames;
         }
 
+        const getDueDateColors = () => {
+            return Task.dueDateColors;
+        }
+
         const saveUserData = () => {
             // Don't save if nothing in user_data
             if (!(user_data.length === 0)) {
@@ -181,6 +164,7 @@ const DataManager = (
         return {
             buildStarterData,
             fetchStoredData,
+            getDueDateColors,
             getProjectIdByIdx,
             getProjectIdxById,
             getProjectTasks,

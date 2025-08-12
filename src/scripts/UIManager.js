@@ -2,6 +2,10 @@ import { DataManager } from "./dataManager";
 import taskTemplate from "../task-template.html";
 import { formatDistanceToNow, compareAsc } from "date-fns";
 
+
+import imgChecked from "../assets/icons/checkbox-marked-outline.svg";
+import imgUnChecked from "../assets/icons/checkbox-blank-outline.svg";
+
 const Manager = (
     function () {
         let selectedIndex = 0;
@@ -77,6 +81,7 @@ const Manager = (
 
             const priorityNames = DataManager.getTaskPriorityNames();
             const priorityColors = DataManager.getTaskPriorityColors();
+            const dueDateColors = DataManager.getDueDateColors();
 
             // taskInfo[1].dueDate = '08/23/2025';
 
@@ -96,12 +101,20 @@ const Manager = (
                 sorted = noDueDate.concat(dueDateSorted);
             } else if (taskSort === 'btn-task-sort-priority') {
                 sorted = taskInfo.sort((a, b) => {
-                    return b.priorityValue - a.priorityValue
+                    return b.priority - a.priority
                 })
             }
 
+            sorted[0].complete = true;
             for (const task of sorted) {
                 const node = taskTemplateElement.content.cloneNode(true);
+
+                const checkBox = node.querySelector('.task-item-checkbox');
+                if (task.complete) {
+                    checkBox.src = imgChecked;
+                } else {
+                    checkBox.src = imgUnChecked;
+                }
 
                 const item = node.querySelector('.task-item');
                 item.id = task.id;
@@ -116,10 +129,10 @@ const Manager = (
                 notes.innerText = task.notes;
 
                 const priority = node.querySelector('.task-priority-info');
-                priority.innerText = priorityNames[task.priorityValue];
-                priority.style.border = `1px solid ${priorityColors[task.priorityValue].border}`;
-                priority.style.backgroundColor = `${priorityColors[task.priorityValue].background}`;
-                priority.style.color = `${priorityColors[task.priorityValue].font}`;
+                priority.innerText = priorityNames[task.priority];
+                priority.style.border = `1px solid ${priorityColors[task.priority].border}`;
+                priority.style.backgroundColor = `${priorityColors[task.priority].background}`;
+                priority.style.color = `${priorityColors[task.priority].font}`;
 
                 const dueDateLabel = node.querySelector('.task-due-date-label');
                 const dueDateInfo = node.querySelector('.task-due-date-info');
@@ -128,33 +141,32 @@ const Manager = (
                 if (hasDueDate) {
                     const taskDueDate = task.dueDate;
                     dueDateLabel.innerText = `Due ${taskDueDate}`;
-
                     const dateObj = new Date(taskDueDate);
                     const distance = formatDistanceToNow(dateObj);
                     const now = new Date();
                     const sameDay = isSameDay(dateObj, now);
+                    let dueBackground;
+                    let dueFont;
                     if (sameDay) {
                         dueDateInfo.innerText = "Due Today";
-                        dueDateLabel.style.backgroundColor = '#ffa600ff';
-                        dueDateLabel.style.color = '#000000';
-                        dueDateInfo.style.backgroundColor = '#ffa600ff';
-                        dueDateInfo.style.color = '#000000';
+                        dueBackground = dueDateColors.today.background;
+                        dueFont = dueDateColors.today.font;
                     } else {
                         const compare = compareAsc(dateObj, now);
                         if (compare === -1) {
                             dueDateInfo.innerText = `Overdue by ${distance}`;
-                            dueDateLabel.style.backgroundColor = '#FF0000'
-                            dueDateLabel.style.color = '#000000';
-                            dueDateInfo.style.backgroundColor = '#FF0000';
-                            dueDateInfo.style.color = '#000000';
+                            dueBackground = dueDateColors.overdue.background;
+                            dueFont = dueDateColors.overdue.font;
                         } else if (compare === 1) {
                             dueDateInfo.innerText = `Due in ${distance}`;
-                            dueDateLabel.style.backgroundColor = '#51ff00ff'
-                            dueDateLabel.style.color = '#000000';
-                            dueDateInfo.style.backgroundColor = '#51ff00ff'
-                            dueDateInfo.style.color = '#000000';
+                            dueBackground = dueDateColors.upcoming.background;
+                            dueFont = dueDateColors.upcoming.font;
                         }
                     }
+                    dueDateLabel.style.backgroundColor = dueBackground;
+                    dueDateLabel.style.color = dueFont
+                    dueDateInfo.style.backgroundColor = dueBackground;
+                    dueDateInfo.style.color = dueFont;
                 } else {
                     dueDateLabel.innerText = "No Due Date";
                     dueDateInfo.innerText = "";
