@@ -105,7 +105,6 @@ const Manager = (
                 })
             }
 
-            sorted[0].complete = true;
             for (const task of sorted) {
                 const node = taskTemplateElement.content.cloneNode(true);
 
