@@ -127,6 +127,10 @@ header h1,
     color: #000000;
 }
 
+.task-list-header-label {
+    margin-inline-start: 10px;
+}
+
 .task-item {
     border: 1px solid var(--font-color);
     border-radius: 10px;

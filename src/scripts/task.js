@@ -117,4 +117,8 @@ export default class Task {
             notes: this.#notes
         }
     }
+
+    toggleComplete() {
+        this.#complete = !this.#complete;
+    }
 }

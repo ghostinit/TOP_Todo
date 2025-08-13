@@ -11,12 +11,14 @@ const Manager = (
         let selectedIndex = 0;
         let taskSort = 'btn-task-sort-none';
 
+        const taskList = document.querySelector('#task-list');
+
         const init = () => {
             // Fetch stored data or starter data
             DataManager.fetchStoredData();
 
             // Temporarily add another project
-            DataManager.buildStarterData();
+            // DataManager.buildStarterData();
 
             const sortButtons = document.querySelectorAll('.btn-task-sort');
             for (let button of sortButtons) {
@@ -29,6 +31,18 @@ const Manager = (
                     populateTasks();
                 })
             }
+
+            taskList.addEventListener('click', (event) => {
+                if (event.target.classList.contains('task-item-checkbox')) {
+                    const taskDiv = event.target.closest('.task-item');
+                    if (taskDiv) {
+                        DataManager.toggleTaskComplete(selectedIndex, taskDiv.id);
+                        DataManager.saveUserData();
+                        populateTasks();
+                    }
+                }
+
+            });
 
             populateProjects();
             populateTasks();
@@ -72,16 +86,16 @@ const Manager = (
             const taskTemplateElement = document.createElement('template');
             taskTemplateElement.innerHTML = taskTemplate;
 
-            const taskList = document.querySelector('#task-list');
+
             taskList.innerHTML = ""
 
             let taskInfo = DataManager.getProjectTasks(selectedIndex);
 
 
 
-            const priorityNames = DataManager.getTaskPriorityNames();
-            const priorityColors = DataManager.getTaskPriorityColors();
-            const dueDateColors = DataManager.getDueDateColors();
+            // const priorityNames = DataManager.getTaskPriorityNames();
+            // const priorityColors = DataManager.getTaskPriorityColors();
+            // const dueDateColors = DataManager.getDueDateColors();
 
             // taskInfo[1].dueDate = '08/23/2025';
 
@@ -105,72 +119,95 @@ const Manager = (
                 })
             }
 
+            sorted = sorted.sort((a, b) => {
+                return (a.complete - b.complete);
+            })
+
+            let incompleteInserted = false;
+            let completeInserted = false;
             for (const task of sorted) {
-                const node = taskTemplateElement.content.cloneNode(true);
-
-                const checkBox = node.querySelector('.task-item-checkbox');
-                if (task.complete) {
-                    checkBox.src = imgChecked;
-                } else {
-                    checkBox.src = imgUnChecked;
+                if ((!incompleteInserted) && (!task.complete)) {
+                    const incompleteHeader = document.createElement('h3');
+                    incompleteHeader.innerText = 'Incomplete Tasks';
+                    incompleteHeader.classList.add('task-list-header-label');
+                    taskList.appendChild(incompleteHeader);
+                    incompleteInserted = true;
                 }
 
-                const item = node.querySelector('.task-item');
-                item.id = task.id;
-
-                const title = node.querySelector('.task-title-header');
-                title.innerText = task.title;
-
-                const desc = node.querySelector('.task-desc');
-                desc.innerText = task.description;
-
-                const notes = node.querySelector('.task-notes');
-                notes.innerText = task.notes;
-
-                const priority = node.querySelector('.task-priority-info');
-                priority.innerText = priorityNames[task.priority];
-                priority.style.border = `1px solid ${priorityColors[task.priority].border}`;
-                priority.style.backgroundColor = `${priorityColors[task.priority].background}`;
-                priority.style.color = `${priorityColors[task.priority].font}`;
-
-                const dueDateLabel = node.querySelector('.task-due-date-label');
-                const dueDateInfo = node.querySelector('.task-due-date-info');
-
-                const hasDueDate = task.hasDueDate;
-                if (hasDueDate) {
-                    const taskDueDate = task.dueDate;
-                    dueDateLabel.innerText = `Due ${taskDueDate}`;
-                    const dateObj = new Date(taskDueDate);
-                    const distance = formatDistanceToNow(dateObj);
-                    const now = new Date();
-                    const sameDay = isSameDay(dateObj, now);
-                    let dueBackground;
-                    let dueFont;
-                    if (sameDay) {
-                        dueDateInfo.innerText = "Due Today";
-                        dueBackground = dueDateColors.today.background;
-                        dueFont = dueDateColors.today.font;
-                    } else {
-                        const compare = compareAsc(dateObj, now);
-                        if (compare === -1) {
-                            dueDateInfo.innerText = `Overdue by ${distance}`;
-                            dueBackground = dueDateColors.overdue.background;
-                            dueFont = dueDateColors.overdue.font;
-                        } else if (compare === 1) {
-                            dueDateInfo.innerText = `Due in ${distance}`;
-                            dueBackground = dueDateColors.upcoming.background;
-                            dueFont = dueDateColors.upcoming.font;
-                        }
-                    }
-                    dueDateLabel.style.backgroundColor = dueBackground;
-                    dueDateLabel.style.color = dueFont
-                    dueDateInfo.style.backgroundColor = dueBackground;
-                    dueDateInfo.style.color = dueFont;
-                } else {
-                    dueDateLabel.innerText = "No Due Date";
-                    dueDateInfo.innerText = "";
-                    dueDateLabel.style.border = '1px solid var(--font-color)';
+                if ((!completeInserted) && (task.complete)) {
+                    const completeHeader = document.createElement('h3');
+                    completeHeader.innerText = "Complete Tasks";
+                    completeHeader.classList.add('task-list-header-label');
+                    taskList.appendChild(completeHeader);
+                    completeInserted = true;
                 }
+                const clonedNode = taskTemplateElement.content.cloneNode(true);
+
+                const node = buildTask(task, clonedNode);
+
+                // const checkBox = node.querySelector('.task-item-checkbox');
+                // if (task.complete) {
+                //     checkBox.src = imgChecked;
+                // } else {
+                //     checkBox.src = imgUnChecked;
+                // }
+
+                // const item = node.querySelector('.task-item');
+                // item.id = task.id;
+
+                // const title = node.querySelector('.task-title-header');
+                // title.innerText = task.title;
+
+                // const desc = node.querySelector('.task-desc');
+                // desc.innerText = task.description;
+
+                // const notes = node.querySelector('.task-notes');
+                // notes.innerText = task.notes;
+
+                // const priority = node.querySelector('.task-priority-info');
+                // priority.innerText = priorityNames[task.priority];
+                // priority.style.border = `1px solid ${priorityColors[task.priority].border}`;
+                // priority.style.backgroundColor = `${priorityColors[task.priority].background}`;
+                // priority.style.color = `${priorityColors[task.priority].font}`;
+
+                // const dueDateLabel = node.querySelector('.task-due-date-label');
+                // const dueDateInfo = node.querySelector('.task-due-date-info');
+
+                // const hasDueDate = task.hasDueDate;
+                // if (hasDueDate) {
+                //     const taskDueDate = task.dueDate;
+                //     dueDateLabel.innerText = `Due ${taskDueDate}`;
+                //     const dateObj = new Date(taskDueDate);
+                //     const distance = formatDistanceToNow(dateObj);
+                //     const now = new Date();
+                //     const sameDay = isSameDay(dateObj, now);
+                //     let dueBackground;
+                //     let dueFont;
+                //     if (sameDay) {
+                //         dueDateInfo.innerText = "Due Today";
+                //         dueBackground = dueDateColors.today.background;
+                //         dueFont = dueDateColors.today.font;
+                //     } else {
+                //         const compare = compareAsc(dateObj, now);
+                //         if (compare === -1) {
+                //             dueDateInfo.innerText = `Overdue by ${distance}`;
+                //             dueBackground = dueDateColors.overdue.background;
+                //             dueFont = dueDateColors.overdue.font;
+                //         } else if (compare === 1) {
+                //             dueDateInfo.innerText = `Due in ${distance}`;
+                //             dueBackground = dueDateColors.upcoming.background;
+                //             dueFont = dueDateColors.upcoming.font;
+                //         }
+                //     }
+                //     dueDateLabel.style.backgroundColor = dueBackground;
+                //     dueDateLabel.style.color = dueFont
+                //     dueDateInfo.style.backgroundColor = dueBackground;
+                //     dueDateInfo.style.color = dueFont;
+                // } else {
+                //     dueDateLabel.innerText = "No Due Date";
+                //     dueDateInfo.innerText = "";
+                //     dueDateLabel.style.border = '1px solid var(--font-color)';
+                // }
 
 
 
@@ -181,6 +218,73 @@ const Manager = (
 
         }
 
+        const buildTask = (task, node) => {
+            const checkBox = node.querySelector('.task-item-checkbox');
+            if (task.complete) {
+                checkBox.src = imgChecked;
+            } else {
+                checkBox.src = imgUnChecked;
+            }
+
+            const item = node.querySelector('.task-item');
+            item.id = task.id;
+
+            const title = node.querySelector('.task-title-header');
+            title.innerText = task.title;
+
+            const desc = node.querySelector('.task-desc');
+            desc.innerText = task.description;
+
+            const notes = node.querySelector('.task-notes');
+            notes.innerText = task.notes;
+
+            const priority = node.querySelector('.task-priority-info');
+            priority.innerText = DataManager.priorityNames[task.priority];
+            priority.style.border = `1px solid ${DataManager.priorityColors[task.priority].border}`;
+            priority.style.backgroundColor = `${DataManager.priorityColors[task.priority].background}`;
+            priority.style.color = `${DataManager.priorityColors[task.priority].font}`;
+
+            const dueDateLabel = node.querySelector('.task-due-date-label');
+            const dueDateInfo = node.querySelector('.task-due-date-info');
+
+            const hasDueDate = task.hasDueDate;
+            if (hasDueDate) {
+                const taskDueDate = task.dueDate;
+                dueDateLabel.innerText = `Due ${taskDueDate}`;
+                const dateObj = new Date(taskDueDate);
+                const distance = formatDistanceToNow(dateObj);
+                const now = new Date();
+                const sameDay = isSameDay(dateObj, now);
+                let dueBackground;
+                let dueFont;
+                if (sameDay) {
+                    dueDateInfo.innerText = "Due Today";
+                    dueBackground = DataManager.dueDateColors.today.background;
+                    dueFont = DataManager.dueDateColors.today.font;
+                } else {
+                    const compare = compareAsc(dateObj, now);
+                    if (compare === -1) {
+                        dueDateInfo.innerText = `Overdue by ${distance}`;
+                        dueBackground = DataManager.dueDateColors.overdue.background;
+                        dueFont = DataManager.dueDateColors.overdue.font;
+                    } else if (compare === 1) {
+                        dueDateInfo.innerText = `Due in ${distance}`;
+                        dueBackground = DataManager.dueDateColors.upcoming.background;
+                        dueFont = DataManager.dueDateColors.upcoming.font;
+                    }
+                }
+                dueDateLabel.style.backgroundColor = dueBackground;
+                dueDateLabel.style.color = dueFont
+                dueDateInfo.style.backgroundColor = dueBackground;
+                dueDateInfo.style.color = dueFont;
+            } else {
+                dueDateLabel.innerText = "No Due Date";
+                dueDateInfo.innerText = "";
+                dueDateLabel.style.border = '1px solid var(--font-color)';
+            }
+            return node;
+        }
+
         const updateSelectedProject = (projectId) => {
             const oldProjectId = DataManager.getProjectIdByIdx(selectedIndex);
             if (!(projectId === oldProjectId)) {
@@ -188,6 +292,7 @@ const Manager = (
                 document.getElementById(oldProjectId).classList.remove('selected-project');
                 selectedIndex = DataManager.getProjectIdxById(projectId);
             }
+            populateTasks();
         }
 
         const isSameDay = (date1, date2) => {

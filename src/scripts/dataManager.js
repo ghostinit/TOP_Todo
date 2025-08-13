@@ -1,6 +1,4 @@
-import { checkStorage } from "./localStorageManager";
-import { loadSavedData } from "./localStorageManager";
-import { saveData } from "./localStorageManager";
+import { checkStorage, loadSavedData, saveData, clearData } from "./localStorageManager";
 
 import { format, compareAsc } from "date-fns";
 
@@ -14,6 +12,10 @@ const DataManager = (
         let user_data = [];
 
         const storageKey = "user_data";
+
+        const priorityNames = Task.priorityNames;
+        const priorityColors = Task.priorityColors;
+        const dueDateColors = Task.dueDateColors;
 
         const starterProjectInfo = {
             title: "Welcome",
@@ -71,12 +73,14 @@ const DataManager = (
         const fetchStoredData = () => {
             // Check if local storage is even available
             let data = {};
-            buildStarterData();
-            saveUserData();
+            // buildStarterData();
+            // saveUserData();
             const storageEnabled = checkStorage();
             if (storageEnabled) {
                 // console.log('Storage Enabled');
                 // Check if anything has previous been saved
+                clearData(storageKey);
+                // return
                 data = loadSavedData(storageKey);
                 if (data === null) {
                     // console.log("No data found, building starter pack");
@@ -95,7 +99,7 @@ const DataManager = (
                 }
             } else {
                 // Unable to save locally, return starter project anyway
-                buildStarterData();
+                // buildStarterData();
             }
             // console.log(`Post build data: `, user_data)
             // return user_data;
@@ -157,11 +161,31 @@ const DataManager = (
             }
         }
 
+        const toggleTaskComplete = (selectedIndex, taskId) => {
+            const taskIdx = getTaskIdxById(selectedIndex, taskId);
+            const project = user_data[selectedIndex];
+            const task = project.getTaskByIndex(taskIdx);
+            task.toggleComplete();
+            // user_data[selectedIndex].tasks[taskIdx].toggleComplete()
+            // console.log(task);
+            // // task.toggleComplete();
+        }
+
+        const getTaskIdxById = (selectedIndex, taskId) => {
+            const taskIdx = user_data[selectedIndex].getAllTasks().findIndex((task) => {
+                return task.id === taskId;
+            });
+            return taskIdx;
+        }
+
 
 
 
 
         return {
+            priorityNames,
+            priorityColors,
+            dueDateColors,
             buildStarterData,
             fetchStoredData,
             getDueDateColors,
@@ -171,7 +195,9 @@ const DataManager = (
             getProjectTitleAndDescByIdx,
             getProjectTitlesAndIds,
             getTaskPriorityColors,
-            getTaskPriorityNames
+            getTaskPriorityNames,
+            saveUserData,
+            toggleTaskComplete
         }
     }
 )();

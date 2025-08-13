@@ -30,6 +30,7 @@ export function checkStorage() {
 }
 
 export function loadSavedData(storageKey) {
+    // localStorage.removeItem(storageKey);
     const data = localStorage.getItem(storageKey);
     // console.log(data);
     return data
@@ -37,6 +38,10 @@ export function loadSavedData(storageKey) {
 
 export function saveData(storageKey, data) {
     localStorage.setItem(storageKey, data);
+}
+
+export function clearData(storageKey) {
+    localStorage.removeItem(storageKey);
 }
 
 // export function load() {
