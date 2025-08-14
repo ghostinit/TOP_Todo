@@ -1,12 +1,14 @@
 import Task from "./task.js";
 
 export default class Project {
+    // Private fields
     #id;
     #title;
     #description;
     #tasks;
 
     constructor(title, description = "", id = null) {
+        // If no id was passed in, create one
         if (id === null) {
             this.#id = crypto.randomUUID();
         } else {
@@ -19,6 +21,8 @@ export default class Project {
     }
 
     // ================ STATIC METHODS
+
+    // Builds a project instance from an object literal
     static getProjectFromObject(obj) {
         let project = new Project(
             obj.title,
@@ -26,6 +30,7 @@ export default class Project {
             obj.id
         )
 
+        // Populate the tasks
         for (let task of obj.tasks) {
             const newTask = Task.getTaskFromObject(task);
             project.addTask(newTask);
@@ -33,16 +38,20 @@ export default class Project {
         return project;
     }
 
+    // Project factory function
     static getNewProject(title, description = "") {
         return new Project(title, description);
     }
 
 
     // ================ PUBLIC METHODS
+
+    // Adds a new task to the project
     addTask(task) {
         this.#tasks.push(task);
     }
 
+    // Returns an object literal of task information
     getAllTasks() {
         let tasksArray = [];
         for (const task of this.#tasks) {
@@ -52,24 +61,12 @@ export default class Project {
         return tasksArray;
     }
 
+    // Returns the id of the project
     getId() {
         return this.#id;
     }
 
-    getProjectForSave() {
-        let taskInfo = []
-        for (let task of this.#tasks) {
-            taskInfo.push(task.getTaskInfoForSave());
-        }
-
-        return {
-            id: this.#id,
-            title: this.#title,
-            description: this.#description,
-            tasks: taskInfo,
-        }
-    }
-
+    // Returns an object literal of the project and all its tasks
     getProjectInfo() {
         let taskInfo = []
         for (let task of this.#tasks) {
@@ -84,6 +81,7 @@ export default class Project {
         }
     }
 
+    // Returns the title and id of the project
     getTitleAndId() {
         return {
             title: this.#title,
@@ -91,6 +89,7 @@ export default class Project {
         }
     }
 
+    // Returns title and description of the project
     getTitleAndDesc() {
         return {
             title: this.#title,
@@ -98,10 +97,12 @@ export default class Project {
         }
     }
 
+    // Returns Task object by its index
     getTaskByIndex(index) {
         return this.#tasks[index];
     }
 
+    // Removes a task from the task array
     removeTask(task) {
         const taskId = task.getId();
         const taskIndex = this.#tasks.findIndex((thisTask) => {

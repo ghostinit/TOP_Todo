@@ -1,6 +1,5 @@
-import { formatDistanceToNow, compareAsc } from "date-fns";
-
 export default class Task {
+    // Private task fields
     #id;
     #title;
     #complete;
@@ -10,6 +9,7 @@ export default class Task {
     #priority;
     #notes;
 
+    // enum like object with task priorities
     static priorityValues = {
         none: 0,
         low: 1,
@@ -18,7 +18,10 @@ export default class Task {
         critical: 4,
     }
 
+    // Array containing the priority levels
     static priorityNames = ['None', 'Low', 'Medium', 'High', 'Critical'];
+
+    // The colors of the priorities to display on the UI
     static priorityColors = [
         {
             border: '#dddddd',
@@ -46,6 +49,8 @@ export default class Task {
             font: '#2b2b2b'
         }
     ]
+
+    // The colors of the due dates for the UI
     static dueDateColors = {
         upcoming: {
             background: 'green',
@@ -62,6 +67,7 @@ export default class Task {
     }
 
     constructor(title, id = null, complete = false, description = "", hasDueDate = false, dueDate = null, priority = Task.priorityValues.none, notes = "") {
+        // If no id is passed, create a new one
         if (id === null) {
             this.#id = crypto.randomUUID();
         } else {
@@ -77,8 +83,9 @@ export default class Task {
     }
 
     // =================== STATIC METHODS
+
+    // Returns a task instance from an object literal
     static getTaskFromObject(obj) {
-        // console.log(obj);
         return new Task(
             obj.title,
             obj.id,
@@ -86,25 +93,29 @@ export default class Task {
             obj.description,
             obj.hasDueDate,
             obj.dueDate,
-            obj.priorityValue,
+            obj.priority,
             obj.notes
         )
     }
 
+    // Task object factory containing all fields needed and their defaults
     static getNewTask(title, id = null, complete = false, description = "", hasDueDate = false, dueDate = null, priority = Task.priorityValues.none, notes = "") {
         return new Task(title, id, complete, description, hasDueDate, dueDate, priority, notes);
     }
 
+    // Simplier Task factory
     static getNewVanillaTask(title) {
         return new Task(title);
     }
 
     // ==================== PUBLIC METHODS
 
+    // Returns the id of the task
     getId() {
         return this.#id;
     }
 
+    // Returns an object literal of the task information
     getTaskInfo() {
         return {
             id: this.#id,
@@ -118,6 +129,7 @@ export default class Task {
         }
     }
 
+    // Toggles the complete state of the task
     toggleComplete() {
         this.#complete = !this.#complete;
     }

@@ -1,5 +1,9 @@
+// Module for storing and retreiving information locally
+
+// Storage availalbe flag
 let storageEnabled = false;
 
+// Checks if storage is available of the specified type
 function storageAvailable(type) {
     let storage;
     try {
@@ -19,6 +23,7 @@ function storageAvailable(type) {
     }
 }
 
+// Checks if local storage is available and sets module flag
 export function checkStorage() {
     if (storageAvailable("localStorage")) {
         storageEnabled = true;
@@ -29,37 +34,26 @@ export function checkStorage() {
     }
 }
 
+// Loads data with the specified storage key
 export function loadSavedData(storageKey) {
-    // localStorage.removeItem(storageKey);
-    const data = localStorage.getItem(storageKey);
-    // console.log(data);
-    return data
+    if (storageEnabled) {
+        const data = localStorage.getItem(storageKey);
+        return data
+    } else {
+        return null
+    }
 }
 
+// Saves data with the specified storage key
 export function saveData(storageKey, data) {
-    localStorage.setItem(storageKey, data);
+    if (storageEnabled) {
+        localStorage.setItem(storageKey, data);
+    }
 }
 
+// Clears Data with the specified storage key
 export function clearData(storageKey) {
-    localStorage.removeItem(storageKey);
+    if (storageEnabled) {
+        localStorage.removeItem(storageKey);
+    }
 }
-
-// export function load() {
-//     if (storageAvailable("localStorage")) {
-//         console.log("Storage is available");
-//         storageEnabled = true;
-//         if (!localStorage.getItem(storageKey)) {
-//             // Nothing stored yet, create default project and tasks
-//             console.log("Nothing stored yet");
-//             const baseProject = Project.getNewProject("Welcome", "A list of tasks to get started");
-//         } else {
-//             console.log("User storage found");
-//             //We've saved before, load it up
-//         }
-//     } else {
-//         console.log("Storage NOT available");
-//         storageEnabled = false;
-//         return { available: false }
-//     }
-// }
-

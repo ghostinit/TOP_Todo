@@ -1,3 +1,4 @@
+// Module for managing user data
 import { checkStorage, loadSavedData, saveData, clearData } from "./localStorageManager";
 
 import { format, compareAsc } from "date-fns";
@@ -9,19 +10,24 @@ import Project from "./project";
 
 const DataManager = (
     function () {
+        // Array that holds projects and tasks
         let user_data = [];
 
+        // Storage key passed to 'localStorageManager'
         const storageKey = "user_data";
 
+        // Information for the UI fetched from Task class
         const priorityNames = Task.priorityNames;
         const priorityColors = Task.priorityColors;
         const dueDateColors = Task.dueDateColors;
 
+        // Object literal for starter project
         const starterProjectInfo = {
             title: "Welcome",
             description: "Complete these tasks to get started!"
         }
 
+        // Object literal for starter tasks
         const starterTasks = [
             {
                 title: "Create New Project",
@@ -51,6 +57,8 @@ const DataManager = (
 
         // =================== METHODS ======================
 
+        // Takes object literals and creates instances of classes
+        // Populates user_data with project
         const buildStarterData = () => {
             const newProject = Project.getNewProject(starterProjectInfo.title, starterProjectInfo.description);
             for (const taskInfo of starterTasks) {
@@ -70,46 +78,44 @@ const DataManager = (
             user_data.push(newProject);
         }
 
+        const clearAllData = () => {
+            clearData(storageKey);
+        }
+
         const fetchStoredData = () => {
             // Check if local storage is even available
             let data = {};
-            // buildStarterData();
-            // saveUserData();
             const storageEnabled = checkStorage();
+
+            // TODO REMOVE ME
+            // clearData(storageKey)
             if (storageEnabled) {
-                // console.log('Storage Enabled');
-                // Check if anything has previous been saved
-                clearData(storageKey);
-                // return
                 data = loadSavedData(storageKey);
                 if (data === null) {
-                    // console.log("No data found, building starter pack");
+                    // No data found, create starter project then save
                     buildStarterData();
                     saveUserData();
                 } else {
-                    console.log("Stored Data Found");
-                    //load the data
-                    // data should contain the user_data is JSON form
+                    // Parse the loaded data
                     const userObj = JSON.parse(data);
                     for (let obj of userObj) {
-                        // console.log(`Building project from: `, obj);
                         const project = Project.getProjectFromObject(obj);
                         user_data.push(project);
                     }
                 }
             } else {
                 // Unable to save locally, return starter project anyway
-                // buildStarterData();
+                buildStarterData();
             }
-            // console.log(`Post build data: `, user_data)
-            // return user_data;
         }
 
+        // Fetches an array containing object literals of all tasks
         const getProjectTasks = (index) => {
             const tasks = user_data[index].getAllTasks();
             return tasks;
         }
 
+        // Fetches the index in user_data of a project by its id
         const getProjectIdxById = (projectId) => {
             const idx = user_data.findIndex((project) => {
                 return project.getId() === projectId;
@@ -117,35 +123,40 @@ const DataManager = (
             return idx;
         }
 
+        // Fetches the id of a project by its position in user_data array
         const getProjectIdByIdx = (projectIdx) => {
             return user_data[projectIdx].getId();
         }
 
+        // Fetches the title and ids of all projects in user_data
         const getProjectTitlesAndIds = () => {
             let projectsInfo = [];
-            // console.log(`User data: `, user_data);
             for (let project of user_data) {
                 projectsInfo.push(project.getTitleAndId());
             }
             return projectsInfo;
         }
 
+        // Fetches a projects title and description by its position in user_data
         const getProjectTitleAndDescByIdx = (idx) => {
             return user_data[idx].getTitleAndDesc();
         }
 
-        const getTaskPriorityColors = () => {
-            return Task.priorityColors;
-        }
+        // const getTaskPriorityColors = () => {
+        //     return Task.priorityColors;
+        // }
 
-        const getTaskPriorityNames = () => {
-            return Task.priorityNames;
-        }
+        // const getTaskPriorityNames = () => {
+        //     return Task.priorityNames;
+        // }
 
-        const getDueDateColors = () => {
-            return Task.dueDateColors;
-        }
+        // const getDueDateColors = () => {
+        //     return Task.dueDateColors;
+        // }
 
+        // Saves user data
+        // Fetches object literals for all projects and their tasks
+        // then stringifies them
         const saveUserData = () => {
             // Don't save if nothing in user_data
             if (!(user_data.length === 0)) {
@@ -161,16 +172,23 @@ const DataManager = (
             }
         }
 
+        // Toggles complete state of a task
+        // selectedIndex = current project active in UI
         const toggleTaskComplete = (selectedIndex, taskId) => {
+            // get the index of the task by id
+            // needs to be done this way because the
+            // order of the sorted tasks
+            // will put them in different positions
+            // and is therefore unreliable
             const taskIdx = getTaskIdxById(selectedIndex, taskId);
+            // fetch the active project
             const project = user_data[selectedIndex];
+            // fetch the tasks
             const task = project.getTaskByIndex(taskIdx);
             task.toggleComplete();
-            // user_data[selectedIndex].tasks[taskIdx].toggleComplete()
-            // console.log(task);
-            // // task.toggleComplete();
         }
 
+        // Fetches the index of the task by its id
         const getTaskIdxById = (selectedIndex, taskId) => {
             const taskIdx = user_data[selectedIndex].getAllTasks().findIndex((task) => {
                 return task.id === taskId;
@@ -178,24 +196,21 @@ const DataManager = (
             return taskIdx;
         }
 
-
-
-
-
         return {
             priorityNames,
             priorityColors,
             dueDateColors,
             buildStarterData,
+            clearAllData,
             fetchStoredData,
-            getDueDateColors,
+            // getDueDateColors,
             getProjectIdByIdx,
             getProjectIdxById,
             getProjectTasks,
             getProjectTitleAndDescByIdx,
             getProjectTitlesAndIds,
-            getTaskPriorityColors,
-            getTaskPriorityNames,
+            // getTaskPriorityColors,
+            // getTaskPriorityNames,
             saveUserData,
             toggleTaskComplete
         }
@@ -203,79 +218,3 @@ const DataManager = (
 )();
 
 export { DataManager };
-
-// const storageKey = "user_data";
-
-// const starterProjectInfo = {
-//     title: "Welcome",
-//     description: "Complete these tasks to get started!"
-// }
-
-// const starterTasks = [
-//     {
-//         title: "Create New Project",
-//         description: "Start you first Project",
-//         hasDueDate: true,
-//         dueDate: format(new Date(), "MM/dd/yyyy"),
-//         priority: Task.priorityValues.high,
-//         notes: "Get something done!",
-//         checklist: []
-//     },
-//     {
-//         title: "Create a Task",
-//         description: "Create your first task!",
-//         hasDueDate: true,
-//         dueDate: format(new Date(), "MM/dd/yyyy"),
-//         priority: Task.priorityValues.medium,
-//         notes: "Set your goal",
-//         checklist: []
-//     },
-//     {
-//         title: "Go for a walk",
-//         description: "Life is a bear, get some fresh air!",
-//         hasDueDate: false,
-//         dueDate: null,
-//         priority: Task.priorityValues.none,
-//         notes: "Nature is good for the soul",
-//         checklist: []
-//     },
-//     {
-//         title: "Buy Yummy Food",
-//         description: "A simple shopping list",
-//         hasDueDate: false,
-//         dueDate: null,
-//         priority: Task.priorityValues.low,
-//         notes: "Some yummy food!",
-//         checklist: [
-//             {
-//                 item: "Fruits",
-//                 complete: false
-//             },
-//             {
-//                 item: "Veggies",
-//                 complete: false
-//             },
-//             {
-//                 item: "Ice Cream",
-//                 complete: false
-//             }
-//         ]
-//     }
-// ]
-
-// function buildStarterData() {
-//     const newProject = Project.getNewProject(starterProjectInfo.title, starterProjectInfo.description);
-//     for (const taskInfo of starterTasks) {
-//         const newTask = Task.getNewTask(
-//             taskInfo.title,
-//             taskInfo.description,
-//             taskInfo.hasDueDate,
-//             taskInfo.dueDate,
-//             taskInfo.priority,
-//             taskInfo.notes,
-//             taskInfo.checklist
-//         );
-//         newProject.addTask(newTask);
-//     }
-//     return newProject;
-// }
