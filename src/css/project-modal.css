@@ -1,0 +1,85 @@
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.modal-content {
+    background: var(--background-color);
+    color: var(--font-color);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 1px solid var(--font-color);
+    position: relative;
+    max-width: 400px;
+    width: 80%;
+    /* box-shadow: 0 0 10px 10px var(--color-card-shadow); */
+
+}
+
+.modal.show {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+.close-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    cursor: pointer;
+    color: #fffbdc;
+    transform: scale(1.2);
+}
+
+
+.modal-content h2 {
+    text-align: center;
+    margin-block-end: 10px;
+}
+
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    margin-block-end: 15px;
+}
+
+.form-row label {
+    font-size: 1.15em;
+}
+
+.form-row input,
+#search-input {
+    padding-inline: 10px;
+    padding-block: 2px;
+    color: var(--font-color);
+    background: var(--background-color);
+    border: 1px solid var(--font-color);
+    border-radius: 8px;
+}
+
+/* .form-row input:hover,
+.form-row input:focus {
+    box-shadow: var(--shadow-common);
+} */
+
+.submit-button-flex {
+    display: flex;
+    justify-content: center;
+}

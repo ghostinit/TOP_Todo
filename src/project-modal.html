@@ -1,0 +1,29 @@
+<div id="project-modal" class="modal hidden">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title" data-projectId="null"
+        data-modalMode="new">
+        <span class="close-button" role="button" tabindex="0" aria-label="Close">&times;</span>
+        <h2 id="modal-title">Add/Edit Project</h2>
+        <form id="project-form" action="" method="get">
+
+            <!-- PROJECT TITLE INPUT -->
+            <div class="form-row">
+                <label for="project-title">Title</label>
+                <input type="text" id="project-title" name="projecTitle" aria-describedby="project-title-help" required
+                    autocomplete="off">
+                <small id="project-title-help">Enter the Project Title</small>
+            </div>
+
+            <!-- PROJECT DESCRIPTION INPUT -->
+            <div class="form-row">
+                <label for="project-desc">Description</label>
+                <input type="text" id="project-desc" name="projectDesc" aria-describedby="project-desc-help" required
+                    autocomplete="off">
+                <small id="project-desc-help">Enter the Project Description</small>
+            </div>
+
+            <div class="submit-button-flex">
+                <button id="submit-project-button" type="submit" aria-label="Add/Edit Project">Add/Edit</button>
+            </div>
+        </form>
+    </div>
+</div>

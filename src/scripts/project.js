@@ -110,4 +110,10 @@ export default class Project {
         });
         this.#tasks.splice(taskIndex, 1);
     }
+
+    // Updates title and description
+    updateTitleAndDesc(title, description) {
+        this.#title = title;
+        this.#description = description;
+    }
 }

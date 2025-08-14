@@ -57,6 +57,12 @@ const DataManager = (
 
         // =================== METHODS ======================
 
+        // Add a new project
+        const addNewProject = (title, description) => {
+            const newProject = Project.getNewProject(title, description);
+            user_data.push(newProject);
+            saveUserData();
+        }
         // Takes object literals and creates instances of classes
         // Populates user_data with project
         const buildStarterData = () => {
@@ -142,18 +148,6 @@ const DataManager = (
             return user_data[idx].getTitleAndDesc();
         }
 
-        // const getTaskPriorityColors = () => {
-        //     return Task.priorityColors;
-        // }
-
-        // const getTaskPriorityNames = () => {
-        //     return Task.priorityNames;
-        // }
-
-        // const getDueDateColors = () => {
-        //     return Task.dueDateColors;
-        // }
-
         // Saves user data
         // Fetches object literals for all projects and their tasks
         // then stringifies them
@@ -188,6 +182,13 @@ const DataManager = (
             task.toggleComplete();
         }
 
+        // Updates a projects information
+        const updateProject = (id, title, description) => {
+            const idx = getProjectIdxById(id);
+            user_data[idx].updateTitleAndDesc(title, description);
+            saveUserData();
+        }
+
         // Fetches the index of the task by its id
         const getTaskIdxById = (selectedIndex, taskId) => {
             const taskIdx = user_data[selectedIndex].getAllTasks().findIndex((task) => {
@@ -200,6 +201,7 @@ const DataManager = (
             priorityNames,
             priorityColors,
             dueDateColors,
+            addNewProject,
             buildStarterData,
             clearAllData,
             fetchStoredData,
@@ -212,7 +214,8 @@ const DataManager = (
             // getTaskPriorityColors,
             // getTaskPriorityNames,
             saveUserData,
-            toggleTaskComplete
+            toggleTaskComplete,
+            updateProject
         }
     }
 )();

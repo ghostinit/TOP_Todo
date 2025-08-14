@@ -2,6 +2,7 @@
 
 import { DataManager } from "./dataManager";
 import taskTemplate from "../task-template.html";
+// import projectModalTemplate from "../project-modal.html";
 import { formatDistanceToNow, compareAsc } from "date-fns";
 
 
@@ -24,6 +25,14 @@ const Manager = (
 
         // Ref to the buttons used for sorting tasks
         const sortButtons = document.querySelectorAll('.btn-task-sort');
+
+        // Project modal objects
+        const btnAddProject = document.querySelector('#btn-add-project');
+        const projectModal = document.querySelector('#project-modal');
+        const btnCloseProjectModal = document.querySelector('#close-project-modal');
+        const btnSubmitProject = document.querySelector('#submit-project-button');
+        const projectForm = document.querySelector('#project-form');
+        const btnEditProject = document.querySelector('#btn-project-edit');
 
         // Initialize the UI
         // Includes setting event listeners
@@ -73,6 +82,75 @@ const Manager = (
 
             });
 
+            // ========================= PROJECT SPECIFIC STUFF ===================
+
+
+            // Add project button event listener
+            btnAddProject.addEventListener('click', () => {
+                const title = projectModal.querySelector('#modal-title');
+                title.innerText = 'Add Project';
+                btnSubmitProject.innerText = 'Add';
+                projectModal.classList.add('show');
+                projectModal.dataset.modalMode = "new";
+            });
+
+            // Close the project modal
+            btnCloseProjectModal.addEventListener('click', () => {
+                projectModal.classList.remove('show');
+            });
+
+            // Close project modal when click outside
+            projectModal.addEventListener('click', (event) => {
+                if (event.target === projectModal) {
+                    projectModal.classList.remove('show');
+                }
+            });
+
+            // Submit project button
+            btnSubmitProject.addEventListener('click', (event) => {
+                event.preventDefault();
+                const isValid = projectForm.reportValidity();
+                if (isValid) {
+                    projectModal.classList.remove('show');
+                    const mode = projectModal.dataset.modalMode;
+
+                    const titleInput = projectModal.querySelector('#project-title-input');
+                    const title = titleInput.value;
+                    titleInput.value = "";
+
+                    const descInput = projectModal.querySelector('#project-desc-input');
+                    const desc = descInput.value;
+                    descInput.value = "";
+
+                    if (mode === 'new') {
+                        DataManager.addNewProject(title, desc);
+                    } else if (mode === 'edit') {
+                        const id = projectModal.dataset.projectId;
+                        DataManager.updateProject(id, title, desc);
+                    }
+                    populateProjects();
+                    updateSelectedProject();
+                }
+            });
+
+            btnEditProject.addEventListener('click', () => {
+                const title = projectModal.querySelector('#modal-title');
+                title.innerText = 'Edit Project';
+                btnSubmitProject.innerText = 'Save';
+                projectModal.dataset.modalMode = "edit";
+                projectModal.dataset.projectId = DataManager.getProjectIdByIdx(selectedIndex);
+
+                const projectInfo = DataManager.getProjectTitleAndDescByIdx(selectedIndex);
+
+                const titleInput = projectModal.querySelector('#project-title-input');
+                titleInput.value = projectInfo.title;
+
+                const descInput = projectModal.querySelector('#project-desc-input');
+                descInput.value = projectInfo.description;
+
+                projectModal.classList.add('show');
+            })
+
             // Populate UI with user data
             populateProjects();
             populateTasks();
@@ -82,8 +160,8 @@ const Manager = (
         // Populate project side bar
         const populateProjects = () => {
             const projectsInfos = DataManager.getProjectTitlesAndIds();
-            // const projectList = document.createElement('ul');
-            // projectList.id = 'project-list';
+
+            projectListContainer.innerHTML = "";
             for (let idx = 0; idx < projectsInfos.length; idx++) {
 
                 const projectTitle = projectsInfos[idx].title;
@@ -280,15 +358,19 @@ const Manager = (
         }
 
         // Called when the user selects a project from the project side bar
-        const updateSelectedProject = (projectId) => {
+        const updateSelectedProject = (projectId = null) => {
             // Get the id of currently selected project
             const oldProjectId = DataManager.getProjectIdByIdx(selectedIndex);
             // Verify current project wasn't clicked again
-            if (!(projectId === oldProjectId)) {
+            if (!(projectId === oldProjectId) && (!(projectId === null))) {
                 // Update classlist and selectedIndex
                 document.getElementById(projectId).classList.add('selected-project');
                 document.getElementById(oldProjectId).classList.remove('selected-project');
                 selectedIndex = DataManager.getProjectIdxById(projectId);
+            } else {
+                if (!(document.getElementById(oldProjectId).classList.contains('selected-project'))) {
+                    document.getElementById(oldProjectId).classList.add('selected-project');
+                }
             }
             // Rebuild tasks
             populateTasks();
