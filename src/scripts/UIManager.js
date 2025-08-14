@@ -2,7 +2,6 @@
 
 import { DataManager } from "./dataManager";
 import taskTemplate from "../task-template.html";
-// import projectModalTemplate from "../project-modal.html";
 import { formatDistanceToNow, compareAsc } from "date-fns";
 
 
