@@ -63,6 +63,22 @@ const DataManager = (
             user_data.push(newProject);
             saveUserData();
         }
+
+        // Add new task to active project
+        const addTaskToActiveProject = (selectedIndex, title, description, hasDueDate, dueDate, priority, notes) => {
+            const newTask = Task.getNewTask(
+                title,
+                null,
+                false,
+                description,
+                hasDueDate,
+                dueDate,
+                priority,
+                notes
+            )
+            user_data[selectedIndex].addTask(newTask);
+            saveUserData();
+        }
         // Takes object literals and creates instances of classes
         // Populates user_data with project
         const buildStarterData = () => {
@@ -213,19 +229,17 @@ const DataManager = (
             priorityColors,
             dueDateColors,
             addNewProject,
+            addTaskToActiveProject,
             buildStarterData,
             clearAllData,
             deleteProject,
             fetchStoredData,
-            // getDueDateColors,
             getProjectCount,
             getProjectIdByIdx,
             getProjectIdxById,
             getProjectTasks,
             getProjectTitleAndDescByIdx,
             getProjectTitlesAndIds,
-            // getTaskPriorityColors,
-            // getTaskPriorityNames,
             saveUserData,
             toggleTaskComplete,
             updateProject

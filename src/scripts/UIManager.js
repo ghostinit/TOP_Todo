@@ -2,7 +2,7 @@
 
 import { DataManager } from "./dataManager";
 import taskTemplate from "../task-template.html";
-import { formatDistanceToNow, compareAsc } from "date-fns";
+import { formatDistanceToNow, compareAsc, format } from "date-fns";
 
 
 import imgChecked from "../assets/icons/checkbox-marked-outline.svg";
@@ -45,6 +45,22 @@ const Manager = (
         const btnEditProject = document.querySelector('#btn-project-edit');
         const btnDeleteProject = document.querySelector('#btn-project-delete');
 
+        // Task modal object
+        const taskModalModeEdit = "edit";
+        const taskModalModeAdd = "add";
+        const btnAddTask = document.querySelector('#btn-add-task');
+        const taskModal = document.querySelector('#task-modal');
+        const btnCloseTaskModal = document.querySelector('#close-task-modal');
+        const btnSubmitTask = document.querySelector('#submit-task-button');
+        const taskForm = document.querySelector('#task-form');
+        const chkTaskHasDueDate = document.querySelector('#input-task-has-duedate');
+        const imgTaskHasDueDate = document.querySelector('.img-custom-checkbox');
+        const datePickerTaskDueDate = document.querySelector('#task-duedate-picker');
+        const containerDatePicker = document.querySelector('#task-duedate-input-div');
+        const priorityRadioGroup = document.querySelector('#priority-radio-group');
+        // const btnEditTask = document.querySelector('.btn-task-edit');
+        // const btnDeleteTask = document.querySelector('.btn-task-delete');
+
         // Initialize the UI
         // Includes setting event listeners
         const init = () => {
@@ -53,6 +69,14 @@ const Manager = (
 
             // REMOVE ME!
             // DataManager.buildStarterData();
+
+            // Set colors of the radio buttons on Task modal
+            for (let i = 0; i < DataManager.priorityColors.length; i++) {
+                const thisLabel = document.querySelector(`#label-priority${i}`)
+                thisLabel.style.border = `1px solid ${DataManager.priorityColors[i].border}`;
+                thisLabel.style.backgroundColor = DataManager.priorityColors[i].background;
+                thisLabel.style.color = DataManager.priorityColors[i].font;
+            }
 
             // Set event listeners on the sort buttons
             for (let button of sortButtons) {
@@ -89,8 +113,19 @@ const Manager = (
                         DataManager.saveUserData();
                         populateTasks();
                     }
+                } else if (event.target.classList.contains('btn-task-edit')) {
+                    const taskDiv = event.target.closest('.task-item');
+                    if (taskDiv) {
+                        const id = taskDiv.id;
+                        console.log(`Edit button clicked for task: ${id}`);
+                    }
+                } else if (event.target.classList.contains('btn-task-delete')) {
+                    const taskDiv = event.target.closest('.task-item');
+                    if (taskDiv) {
+                        const id = taskDiv.id;
+                        console.log(`Delete button clicked for task: ${id}`);
+                    }
                 }
-
             });
 
             // ========================= CONFIRM MODAL STUFF ======================
@@ -130,17 +165,16 @@ const Manager = (
 
             // Add project button event listener
             btnAddProject.addEventListener('click', () => {
-                const title = projectModal.querySelector('#project-modal-title');
-                title.innerText = 'Add Project';
+                projectModal.querySelector('#project-modal-title').innerText = 'Add Project';
                 btnSubmitProject.innerText = 'Add';
-                const titleInput = projectModal.querySelector('#project-title-input');
-                titleInput.value = '';
 
-                const descInput = projectModal.querySelector('#project-desc-input');
-                descInput.value = '';
+                projectModal.querySelector('#project-title-input').value = '';
+                projectModal.querySelector('#project-desc-input').value = '';
 
-                projectModal.classList.add('show');
+
                 projectModal.dataset.modalMode = projectModalModeAdd;
+                projectModal.classList.add('show');
+                projectModal.querySelector('#project-title-input').focus()
             });
 
             // Close the project modal
@@ -196,6 +230,7 @@ const Manager = (
                 descInput.value = projectInfo.description;
 
                 projectModal.classList.add('show');
+                titleInput.focus();
             })
 
             btnDeleteProject.addEventListener('click', () => {
@@ -214,11 +249,108 @@ const Manager = (
                 }
             })
 
+            // ========================== TASK MODAL STUFF ===========================
+
+            // Add task event listener
+            btnAddTask.addEventListener('click', () => {
+                taskModal.querySelector('#task-modal-title').innerText = "Add New Task";
+                btnSubmitTask.innerText = "Add";
+
+                // Set defaults
+                taskModal.querySelector('#task-title-input').innerText = "";
+                taskModal.querySelector('#task-desc-input').innerText = "";
+                imgTaskHasDueDate.src = imgUnChecked;
+                chkTaskHasDueDate.checked = false;
+                containerDatePicker.classList.add('hide');
+
+                datePickerTaskDueDate.valueAsDate = new Date();
+
+                updateSelectedTaskModalRadio(0);
+
+                taskModal.dataset.modalMode = taskModalModeAdd;
+                taskModal.classList.add('show');
+                taskModal.querySelector('#task-title-input').focus();
+            });
+
+            // Close task modal
+            btnCloseTaskModal.addEventListener('click', () => {
+                taskModal.classList.remove('show');
+            });
+
+            // Close task modal on outside click
+            taskModal.addEventListener('click', (event) => {
+                if (event.target === taskModal) {
+                    taskModal.classList.remove('show');
+                }
+            });
+
+            // Submit task button
+            btnSubmitTask.addEventListener('click', (event) => {
+                event.preventDefault();
+                const isValid = taskForm.reportValidity();
+                if (isValid) {
+                    taskModal.classList.remove('show');
+                    const taskTitle = document.querySelector('#task-title-input').value
+                    const taskDesc = document.querySelector('#task-desc-input').value
+                    const taskHasDueDate = chkTaskHasDueDate.checked;
+                    let taskDueDate = null
+                    if (taskHasDueDate) {
+                        taskDueDate = format(datePickerTaskDueDate.valueAsDate, "MM/dd/yyyy");
+                    }
+                    const priority = parseInt(document.querySelector('input[name="priority"]:checked')?.value)
+                    const notes = document.querySelector('#task-notes-input').value;
+                    console.log({
+                        title: taskTitle,
+                        desc: taskDesc,
+                        hasDueDate: taskHasDueDate,
+                        taskDueDate: taskDueDate,
+                        priority: priority,
+                        notes: notes
+                    })
+                    DataManager.addTaskToActiveProject(
+                        selectedIndex,
+                        taskTitle,
+                        taskDesc,
+                        taskHasDueDate,
+                        taskDueDate,
+                        priority,
+                        notes
+                    )
+                    populateTasks();
+                }
+            });
+
+            chkTaskHasDueDate.addEventListener('click', (event) => {
+                if (event.target.checked) {
+                    imgTaskHasDueDate.src = imgChecked;
+                    datePickerTaskDueDate.required = true;
+                    containerDatePicker.classList.remove('hide');
+                } else {
+                    imgTaskHasDueDate.src = imgUnChecked;
+                    datePickerTaskDueDate.required = false;
+                    containerDatePicker.classList.add('hide');
+                }
+            });
+
+            document.querySelectorAll('input[name="priority"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    const newValue = document.querySelector('input[name="priority"]:checked')?.value
+                    updateSelectedTaskModalRadio(newValue);
+                });
+            });
+
+
             // Populate UI with user data
             populateProjects();
             populateTasks();
         }
 
+        const updateSelectedTaskModalRadio = (newIdx) => {
+            for (let i = 0; i < DataManager.priorityColors.length; i++) {
+                document.querySelector(`#label-priority${i}`).classList.remove('selected-priority');
+            }
+            document.querySelector(`#label-priority${newIdx}`).classList.add('selected-priority');
+        }
 
         // Populate project side bar
         const populateProjects = () => {

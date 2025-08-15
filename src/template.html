@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webpack Template</title>
+    <title>Task Masterson</title>
 </head>
 
 <body>
@@ -85,8 +85,8 @@
 
     <!-- ============================ ADD / EDIT PROJECT MODAL ======================= -->
     <div id="project-modal" class="modal hidden">
-        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title" data-projectId="null"
-            data-modalMode="new">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="project-modal-title"
+            data-projectId="null" data-modalMode="new">
             <span id="close-project-modal" class="close-button" role="button" tabindex="0"
                 aria-label="Close">&times;</span>
             <h2 id="project-modal-title">Add/Edit Project</h2>
@@ -118,7 +118,7 @@
 
     <!-- ============================ CONFIRM ACTION MODAL ======================= -->
     <div id="confirm-modal" class="modal hidden">
-        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title"
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title"
             data-confirmAction="null" data-objectId="null">
             <span id="close-confirm-modal" class="close-button" role="button" tabindex="0"
                 aria-label="Close">&times;</span>
@@ -129,6 +129,95 @@
                 <div class="submit-button-flex">
                     <button class="modal-button" id="submit-confirm-button" type="submit"
                         aria-label="Confirm Action Button">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================ ADD / EDIT TASK MODAL ======================= -->
+    <div id="task-modal" class="modal hidden">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="task-modal-title" data-taskId="null"
+            data-modalMode="null">
+            <span id="close-task-modal" class="close-button" role="button" tabindex="0"
+                aria-label="Close">&times;</span>
+            <h2 id="task-modal-title">Add/Edit Task</h2>
+            <form id="task-form" action="" method="get">
+
+                <!-- TASK TITLE INPUT -->
+                <div class="form-row">
+                    <label for="task-title-input">Title</label>
+                    <input type="text" id="task-title-input" name="taskTitle" aria-describedby="task-title-help"
+                        required autocomplete="off">
+                    <small id="task-title-help">Enter the Task Title</small>
+                </div>
+
+                <!-- TASK DESCRIPTION INPUT -->
+                <div class="form-row">
+                    <label for="task-desc-input">Description</label>
+                    <input type="text" id="task-desc-input" name="taskDesc" aria-describedby="task-desc-help" required
+                        autocomplete="off">
+                    <small id="task-desc-help">Enter the Task Description</small>
+                </div>
+
+                <!-- TASK HAS DUE DATE INPUT -->
+                <div class="form-row">
+                    <label for="input-task-has-duedate" class="custom-checkbox">
+                        <input type="checkbox" id="input-task-has-duedate">
+                        <img class="img-custom-checkbox"></img>
+                        Has Due Date?
+                    </label>
+                </div>
+
+                <!-- TASK DATE PICKER -->
+                <div class="form-row" id="task-duedate-input-div">
+                    <label for="task-due-date-picker">Due Date</label>
+                    <input id="task-duedate-picker" type="date">
+                </div>
+
+                <!-- PRIORITY SELECTION -->
+                <div class="form-row">
+                    <label for="">Task Priority</label>
+                    <div id="priority-radio-group">
+                        <label id="label-priority0" for="priority0" class="priority-radio-label">
+                            <input class="priority-radio-button" type="radio" id="priority0" name="priority" value="0"
+                                checked>
+                            None
+                        </label>
+
+                        <label id="label-priority1" for="priority1" class="priority-radio-label">
+                            <input class="priority-radio-button" type="radio" id="priority1" name="priority" value="1">
+                            Low
+                        </label>
+
+                        <label id="label-priority2" for="priority2" class="priority-radio-label">
+                            <input class="priority-radio-button" type="radio" id="priority2" name="priority" value="2">
+                            Medium
+                        </label>
+
+                        <label id="label-priority3" for="priority3" class="priority-radio-label">
+                            <input class="priority-radio-button" type="radio" id="priority3" name="priority" value="3">
+                            High
+                        </label>
+
+                        <label id="label-priority4" for="priority4" class="priority-radio-label">
+                            <input class="priority-radio-button" type="radio" id="priority4" name="priority" value="4">
+                            Critical
+                        </label>
+                    </div>
+                    <small>Select the task priority</small>
+                </div>
+
+                <!-- NOTES INPUT -->
+                <div class="form-row">
+                    <label for="task-notes-input">Notes</label>
+                    <input type="text" id="task-notes-input" name="taskDesc" aria-describedby="task-notes-help"
+                        autocomplete="off">
+                    <small id="task-notes-help">Enter any notes for the task</small>
+                </div>
+
+                <div class="submit-button-flex">
+                    <button class="modal-button" id="submit-task-button" type="submit"
+                        aria-label="Add/Edit Task">Add/Edit</button>
                 </div>
             </form>
         </div>

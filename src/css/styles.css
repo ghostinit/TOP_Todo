@@ -135,3 +135,49 @@ header h1,
     border: 1px solid var(--font-color);
     border-radius: 10px;
 }
+
+/* Custom checkbox */
+
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.img-custom-checkbox {
+    max-width: 32px;
+    max-height: 32px;
+    transition: 0.2s ease;
+}
+
+.custom-checkbox input {
+    display: none;
+}
+
+.hide {
+    display: none;
+}
+
+#priority-radio-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    margin-block: 10px;
+}
+
+.priority-radio-button {
+    display: none;
+}
+
+.priority-radio-label {
+    padding-block: 3px;
+    padding-inline: 9px;
+    border-radius: 18px;
+    transition: 0.2s ease;
+}
+
+.selected-priority {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px 2px var(--font-color);
+}
