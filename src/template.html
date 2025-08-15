@@ -16,7 +16,7 @@
         <div id="project-content">
             <div id="project-content-header">
                 <h2 id="project-header">Projects</h2>
-                <img src="/src/assets/icons/plus.svg" alt="Add project button" id="btn-add-project"
+                <img src="/src/assets/icons/plus.svg" alt="Add project button" id="btn-add-project" role="button"
                     class="btn-add-item">
             </div>
             <div id="project-list-container"></div>
@@ -26,10 +26,11 @@
                 <h3 id="project-info-name">PROJECT NAME</h3>
                 <h4 id="project-info-desc">Description</h4>
                 <div id="project-edit">
-                    <img src="/src/assets/icons/pencil.svg" alt="Edit Project" id="btn-project-edit">
+                    <img src="/src/assets/icons/pencil.svg" alt="Edit Project" id="btn-project-edit" role="button">
                 </div>
                 <div id="project-delete">
-                    <img src="/src/assets/icons/trash-can-outline.svg" alt="Delete Project" id="btn-project-delete">
+                    <img src="/src/assets/icons/trash-can-outline.svg" alt="Delete Project" id="btn-project-delete"
+                        role="button">
                 </div>
 
             </div>
@@ -37,7 +38,7 @@
                 <div id="task-content-header">
                     <h4 id="task-header">Tasks</h2>
                         <img src="/src/assets/icons/plus.svg" alt="Add task button" id="btn-add-task"
-                            class="btn-add-item">
+                            class="btn-add-item" role="button">
                 </div>
                 <div id="task-sort-header">
                     <h4 id="task-sort-title">Sort By</h4>
@@ -81,12 +82,14 @@
             </div>
         </div>
     </main>
+
+    <!-- ============================ ADD / EDIT PROJECT MODAL ======================= -->
     <div id="project-modal" class="modal hidden">
         <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title" data-projectId="null"
             data-modalMode="new">
             <span id="close-project-modal" class="close-button" role="button" tabindex="0"
                 aria-label="Close">&times;</span>
-            <h2 id="modal-title">Add/Edit Project</h2>
+            <h2 id="project-modal-title">Add/Edit Project</h2>
             <form id="project-form" action="" method="get">
 
                 <!-- PROJECT TITLE INPUT -->
@@ -106,7 +109,26 @@
                 </div>
 
                 <div class="submit-button-flex">
-                    <button id="submit-project-button" type="submit" aria-label="Add/Edit Project">Add/Edit</button>
+                    <button class="modal-button" id="submit-project-button" type="submit"
+                        aria-label="Add/Edit Project">Add/Edit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================ CONFIRM ACTION MODAL ======================= -->
+    <div id="confirm-modal" class="modal hidden">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title"
+            data-confirmAction="null" data-objectId="null">
+            <span id="close-confirm-modal" class="close-button" role="button" tabindex="0"
+                aria-label="Close">&times;</span>
+            <h2 id="close-modal-title">Add/Edit Project</h2>
+            <p id="close-modal-message" class="modal-message">CONFIM ACTION PLEASE</p>
+            <form id="confirm-form" action="" method="get">
+
+                <div class="submit-button-flex">
+                    <button class="modal-button" id="submit-confirm-button" type="submit"
+                        aria-label="Confirm Action Button">Confirm</button>
                 </div>
             </form>
         </div>

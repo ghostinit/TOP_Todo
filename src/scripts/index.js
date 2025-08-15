@@ -1,6 +1,6 @@
 import "/src/css/reset.css";
 import "/src/css/variables.css";
-import "/src/css/project-modal.css";
+import "/src/css/modal.css";
 import "/src/css/layout.css";
 import "/src/css/styles.css";
 

@@ -25,13 +25,25 @@ const Manager = (
         // Ref to the buttons used for sorting tasks
         const sortButtons = document.querySelectorAll('.btn-task-sort');
 
+        // Confirm Modal objects
+        const actionDeleteProject = "delete-project";
+        const actionDeleteTask = "delete-task";
+        const actionInvalidAction = "invalid-action";
+        const confirmModal = document.querySelector('#confirm-modal');
+        const btnConfirmModalClose = document.querySelector('#close-confirm-modal');
+        const btnSubmitConfirmModal = document.querySelector('#submit-confirm-button');
+
+
         // Project modal objects
+        const projectModalModeEdit = "edit";
+        const projectModalModeAdd = "add";
         const btnAddProject = document.querySelector('#btn-add-project');
         const projectModal = document.querySelector('#project-modal');
         const btnCloseProjectModal = document.querySelector('#close-project-modal');
         const btnSubmitProject = document.querySelector('#submit-project-button');
         const projectForm = document.querySelector('#project-form');
         const btnEditProject = document.querySelector('#btn-project-edit');
+        const btnDeleteProject = document.querySelector('#btn-project-delete');
 
         // Initialize the UI
         // Includes setting event listeners
@@ -81,16 +93,54 @@ const Manager = (
 
             });
 
+            // ========================= CONFIRM MODAL STUFF ======================
+            btnConfirmModalClose.addEventListener('click', () => {
+                confirmModal.classList.remove('show');
+            })
+
+            // Close cofirm modal when click outside
+            confirmModal.addEventListener('click', (event) => {
+                if (event.target === confirmModal) {
+                    confirmModal.classList.remove('show');
+                }
+            });
+
+            // Modal action confirmed
+            btnSubmitConfirmModal.addEventListener('click', (event) => {
+                event.preventDefault();
+                confirmModal.classList.remove('show');
+                const confirmAction = confirmModal.dataset.confirmAction;
+                const objectId = confirmModal.dataset.objectId;
+
+                if (confirmAction === actionDeleteProject) {
+                    DataManager.deleteProject(objectId);
+                    console.log(`Selected Idx: ${selectedIndex}`);
+                    const projectCount = DataManager.getProjectCount();
+                    console.log(`Project count: ${projectCount}`);
+                    if (selectedIndex === DataManager.getProjectCount()) {
+                        selectedIndex = DataManager.getProjectCount() - 1;
+                    }
+                    console.log(`New selected index: ${selectedIndex}`);
+                    populateProjects();
+                    updateSelectedProject();
+                }
+            })
             // ========================= PROJECT SPECIFIC STUFF ===================
 
 
             // Add project button event listener
             btnAddProject.addEventListener('click', () => {
-                const title = projectModal.querySelector('#modal-title');
+                const title = projectModal.querySelector('#project-modal-title');
                 title.innerText = 'Add Project';
                 btnSubmitProject.innerText = 'Add';
+                const titleInput = projectModal.querySelector('#project-title-input');
+                titleInput.value = '';
+
+                const descInput = projectModal.querySelector('#project-desc-input');
+                descInput.value = '';
+
                 projectModal.classList.add('show');
-                projectModal.dataset.modalMode = "new";
+                projectModal.dataset.modalMode = projectModalModeAdd;
             });
 
             // Close the project modal
@@ -115,15 +165,13 @@ const Manager = (
 
                     const titleInput = projectModal.querySelector('#project-title-input');
                     const title = titleInput.value;
-                    titleInput.value = "";
 
                     const descInput = projectModal.querySelector('#project-desc-input');
                     const desc = descInput.value;
-                    descInput.value = "";
 
-                    if (mode === 'new') {
+                    if (mode === projectModalModeAdd) {
                         DataManager.addNewProject(title, desc);
-                    } else if (mode === 'edit') {
+                    } else if (mode === projectModalModeEdit) {
                         const id = projectModal.dataset.projectId;
                         DataManager.updateProject(id, title, desc);
                     }
@@ -133,10 +181,10 @@ const Manager = (
             });
 
             btnEditProject.addEventListener('click', () => {
-                const title = projectModal.querySelector('#modal-title');
+                const title = projectModal.querySelector('#project-modal-title');
                 title.innerText = 'Edit Project';
                 btnSubmitProject.innerText = 'Save';
-                projectModal.dataset.modalMode = "edit";
+                projectModal.dataset.modalMode = projectModalModeEdit;
                 projectModal.dataset.projectId = DataManager.getProjectIdByIdx(selectedIndex);
 
                 const projectInfo = DataManager.getProjectTitleAndDescByIdx(selectedIndex);
@@ -150,6 +198,22 @@ const Manager = (
                 projectModal.classList.add('show');
             })
 
+            btnDeleteProject.addEventListener('click', () => {
+                if (DataManager.getProjectCount() === 1) {
+                    confirmModal.confirmAction = actionInvalidAction;
+                    document.querySelector('#close-modal-title').innerText = "Uh Oh!";
+                    document.querySelector('#close-modal-message').innerText = "There MUST be at least 1 project!";
+                    confirmModal.classList.add('show');
+                } else {
+                    confirmModal.dataset.confirmAction = actionDeleteProject;
+                    confirmModal.dataset.objectId = DataManager.getProjectIdByIdx(selectedIndex);
+                    const projectTitle = DataManager.getProjectTitleAndDescByIdx(selectedIndex)['title'];
+                    document.querySelector('#close-modal-title').innerText = "Delete Project";
+                    document.querySelector('#close-modal-message').innerText = `Really Delete Project "${projectTitle}"?`;
+                    confirmModal.classList.add('show');
+                }
+            })
+
             // Populate UI with user data
             populateProjects();
             populateTasks();
@@ -158,24 +222,26 @@ const Manager = (
 
         // Populate project side bar
         const populateProjects = () => {
-            const projectsInfos = DataManager.getProjectTitlesAndIds();
+            if (DataManager.getProjectCount() > 0) {
+                const projectsInfos = DataManager.getProjectTitlesAndIds();
 
-            projectListContainer.innerHTML = "";
-            for (let idx = 0; idx < projectsInfos.length; idx++) {
+                projectListContainer.innerHTML = "";
+                for (let idx = 0; idx < projectsInfos.length; idx++) {
 
-                const projectTitle = projectsInfos[idx].title;
-                const projectId = projectsInfos[idx].id;
+                    const projectTitle = projectsInfos[idx].title;
+                    const projectId = projectsInfos[idx].id;
 
-                const listItem = document.createElement('div');
-                listItem.classList.add('project-list-item');
-                listItem.id = projectId;
-                listItem.innerText = projectTitle;
+                    const listItem = document.createElement('div');
+                    listItem.classList.add('project-list-item');
+                    listItem.id = projectId;
+                    listItem.innerText = projectTitle;
 
-                if (selectedIndex === idx) {
-                    listItem.classList.add('selected-project');
+                    if (selectedIndex === idx) {
+                        listItem.classList.add('selected-project');
+                    }
+
+                    projectListContainer.appendChild(listItem);
                 }
-
-                projectListContainer.appendChild(listItem);
             }
         }
 
@@ -358,21 +424,23 @@ const Manager = (
 
         // Called when the user selects a project from the project side bar
         const updateSelectedProject = (projectId = null) => {
-            // Get the id of currently selected project
-            const oldProjectId = DataManager.getProjectIdByIdx(selectedIndex);
-            // Verify current project wasn't clicked again
-            if (!(projectId === oldProjectId) && (!(projectId === null))) {
-                // Update classlist and selectedIndex
-                document.getElementById(projectId).classList.add('selected-project');
-                document.getElementById(oldProjectId).classList.remove('selected-project');
-                selectedIndex = DataManager.getProjectIdxById(projectId);
-            } else {
-                if (!(document.getElementById(oldProjectId).classList.contains('selected-project'))) {
-                    document.getElementById(oldProjectId).classList.add('selected-project');
+            if (DataManager.getProjectCount() > 0) {
+                // Get the id of currently selected project
+                const oldProjectId = DataManager.getProjectIdByIdx(selectedIndex);
+                // Verify current project wasn't clicked again
+                if (!(projectId === oldProjectId) && (!(projectId === null))) {
+                    // Update classlist and selectedIndex
+                    document.getElementById(projectId).classList.add('selected-project');
+                    document.getElementById(oldProjectId).classList.remove('selected-project');
+                    selectedIndex = DataManager.getProjectIdxById(projectId);
+                } else {
+                    if (!(document.getElementById(oldProjectId).classList.contains('selected-project'))) {
+                        document.getElementById(oldProjectId).classList.add('selected-project');
+                    }
                 }
+                // Rebuild tasks
+                populateTasks();
             }
-            // Rebuild tasks
-            populateTasks();
         }
 
         // Kinda jenky but couldn't find a super easy way to compare 2 date

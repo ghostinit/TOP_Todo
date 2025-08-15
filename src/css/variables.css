@@ -6,4 +6,7 @@
 
     --list-item-hover-background: rgb(55, 55, 55);
     --selected-project-background: rgb(0, 100, 255);
+
+    --btn-background-color: #5e5e5e;
+    --btn-background-color-active: #0e0e0e;
 }

@@ -189,12 +189,23 @@ const DataManager = (
             saveUserData();
         }
 
+        // Delete a project
+        const deleteProject = (projectId) => {
+            const projectIdx = getProjectIdxById(projectId);
+            user_data.splice(projectIdx, 1);
+            saveUserData();
+        }
+
         // Fetches the index of the task by its id
         const getTaskIdxById = (selectedIndex, taskId) => {
             const taskIdx = user_data[selectedIndex].getAllTasks().findIndex((task) => {
                 return task.id === taskId;
             });
             return taskIdx;
+        }
+
+        const getProjectCount = () => {
+            return user_data.length;
         }
 
         return {
@@ -204,8 +215,10 @@ const DataManager = (
             addNewProject,
             buildStarterData,
             clearAllData,
+            deleteProject,
             fetchStoredData,
             // getDueDateColors,
+            getProjectCount,
             getProjectIdByIdx,
             getProjectIdxById,
             getProjectTasks,
