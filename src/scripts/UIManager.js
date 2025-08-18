@@ -116,14 +116,46 @@ const Manager = (
                 } else if (event.target.classList.contains('btn-task-edit')) {
                     const taskDiv = event.target.closest('.task-item');
                     if (taskDiv) {
-                        const id = taskDiv.id;
-                        console.log(`Edit button clicked for task: ${id}`);
+                        const taskId = taskDiv.id;
+                        const taskToEdit = DataManager.getTaskFromProject(selectedIndex, taskId).getTaskInfo();
+                        console.log(taskToEdit);
+
+                        // Set modal info
+                        taskModal.querySelector('#task-modal-title').innerText = "Edit Task";
+                        taskModal.querySelector('#task-title-input').value = taskToEdit.title;
+                        taskModal.querySelector('#task-desc-input').value = taskToEdit.description;
+
+                        if (taskToEdit.hasDueDate) {
+                            imgTaskHasDueDate.src = imgChecked;
+                            containerDatePicker.classList.remove('hide');
+                            datePickerTaskDueDate.valueAsDate = new Date(taskToEdit.dueDate);
+                        } else {
+                            imgTaskHasDueDate.src = imgUnChecked;
+                            containerDatePicker.classList.add('hide');
+                            datePickerTaskDueDate.valueAsDate = new Date();
+                        }
+
+                        updateSelectedTaskModalRadio(taskToEdit.priority);
+
+                        taskModal.querySelector('#task-notes-input').value = taskToEdit.notes;
+
+                        btnSubmitTask.innerText = "Save";
+
+                        taskModal.dataset.modalMode = taskModalModeEdit;
+                        taskModal.dataset.taskId = taskId;
+                        taskModal.classList.add('show');
+                        taskModal.querySelector('#task-title-input').focus();
                     }
                 } else if (event.target.classList.contains('btn-task-delete')) {
                     const taskDiv = event.target.closest('.task-item');
                     if (taskDiv) {
-                        const id = taskDiv.id;
-                        console.log(`Delete button clicked for task: ${id}`);
+                        const taskId = taskDiv.id;
+                        confirmModal.dataset.confirmAction = actionDeleteTask;
+                        confirmModal.dataset.objectId = taskId;
+                        const taskTitle = DataManager.getTaskTitleById(selectedIndex, taskId);
+                        document.querySelector('#close-modal-title').innerText = "Delete Task";
+                        document.querySelector('#close-modal-message').innerText = `Really Delete Task "${taskTitle}"?`;
+                        confirmModal.classList.add('show');
                     }
                 }
             });
@@ -158,6 +190,9 @@ const Manager = (
                     console.log(`New selected index: ${selectedIndex}`);
                     populateProjects();
                     updateSelectedProject();
+                } else if (confirmAction === actionDeleteTask) {
+                    DataManager.deleteTask(selectedIndex, objectId);
+                    populateTasks();
                 }
             })
             // ========================= PROJECT SPECIFIC STUFF ===================
@@ -257,8 +292,8 @@ const Manager = (
                 btnSubmitTask.innerText = "Add";
 
                 // Set defaults
-                taskModal.querySelector('#task-title-input').innerText = "";
-                taskModal.querySelector('#task-desc-input').innerText = "";
+                taskModal.querySelector('#task-title-input').value = "";
+                taskModal.querySelector('#task-desc-input').value = "";
                 imgTaskHasDueDate.src = imgUnChecked;
                 chkTaskHasDueDate.checked = false;
                 containerDatePicker.classList.add('hide');
@@ -266,6 +301,10 @@ const Manager = (
                 datePickerTaskDueDate.valueAsDate = new Date();
 
                 updateSelectedTaskModalRadio(0);
+
+                taskModal.querySelector('#task-notes-input').value = "";
+
+                btnSubmitTask.innerText = "Add";
 
                 taskModal.dataset.modalMode = taskModalModeAdd;
                 taskModal.classList.add('show');
@@ -290,13 +329,20 @@ const Manager = (
                 const isValid = taskForm.reportValidity();
                 if (isValid) {
                     taskModal.classList.remove('show');
+                    const modalMode = taskModal.dataset.modalMode;
+
                     const taskTitle = document.querySelector('#task-title-input').value
                     const taskDesc = document.querySelector('#task-desc-input').value
                     const taskHasDueDate = chkTaskHasDueDate.checked;
                     let taskDueDate = null
+                    console.log(datePickerTaskDueDate.value)
+                    let picked = datePickerTaskDueDate.value;      // "2025-08-18"
+                    let [y, m, d] = picked.split('-');
                     if (taskHasDueDate) {
-                        taskDueDate = format(datePickerTaskDueDate.valueAsDate, "MM/dd/yyyy");
+                        // taskDueDate = format(new Date(datePickerTaskDueDate.value), "MM/dd/yyyy");
+                        taskDueDate = `${m}/${d}/${y}`;
                     }
+                    console.log(taskDueDate);
                     const priority = parseInt(document.querySelector('input[name="priority"]:checked')?.value)
                     const notes = document.querySelector('#task-notes-input').value;
                     console.log({
@@ -307,15 +353,29 @@ const Manager = (
                         priority: priority,
                         notes: notes
                     })
-                    DataManager.addTaskToActiveProject(
-                        selectedIndex,
-                        taskTitle,
-                        taskDesc,
-                        taskHasDueDate,
-                        taskDueDate,
-                        priority,
-                        notes
-                    )
+
+                    if (modalMode === taskModalModeAdd) {
+                        DataManager.addTaskToActiveProject(
+                            selectedIndex,
+                            taskTitle,
+                            taskDesc,
+                            taskHasDueDate,
+                            taskDueDate,
+                            priority,
+                            notes
+                        )
+                    } else if (modalMode === taskModalModeEdit) {
+                        const taskId = taskModal.dataset.taskId;
+                        const taskInfo = {
+                            title: taskTitle,
+                            description: taskDesc,
+                            hasDueDate: taskHasDueDate,
+                            dueDate: taskDueDate,
+                            priority: priority,
+                            notes: notes
+                        }
+                        DataManager.updateTask(selectedIndex, taskId, taskInfo);
+                    }
                     populateTasks();
                 }
             });

@@ -133,4 +133,14 @@ export default class Task {
     toggleComplete() {
         this.#complete = !this.#complete;
     }
+
+    // Updates the task
+    updateSelf(taskInfo) {
+        this.#title = taskInfo.title;
+        this.#description = taskInfo.description;
+        this.#hasDueDate = taskInfo.hasDueDate;
+        this.#dueDate = taskInfo.dueDate;
+        this.#priority = taskInfo.priority;
+        this.#notes = taskInfo.notes;
+    }
 }

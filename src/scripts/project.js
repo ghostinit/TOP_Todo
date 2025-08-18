@@ -51,6 +51,11 @@ export default class Project {
         this.#tasks.push(task);
     }
 
+    deleteTaskById(taskId) {
+        const taskIndex = this.getTaskIndexById(taskId);
+        this.#tasks.splice(taskIndex, 1);
+    }
+
     // Returns an object literal of task information
     getAllTasks() {
         let tasksArray = [];
@@ -81,6 +86,11 @@ export default class Project {
         }
     }
 
+    getTaskTitle(taskId) {
+        const thisTask = this.getTaskById(taskId).getTaskInfo();
+        return thisTask.title;
+    }
+
     // Returns the title and id of the project
     getTitleAndId() {
         return {
@@ -102,13 +112,28 @@ export default class Project {
         return this.#tasks[index];
     }
 
+    getTaskIndexById(taskId) {
+        return this.#tasks.findIndex((thisTask) => {
+            return thisTask.getId() === taskId;
+        });
+    }
+
+    getTaskById(taskId) {
+        const taskIndex = this.getTaskIndexById(taskId);
+        return this.#tasks[taskIndex];
+    }
+
     // Removes a task from the task array
     removeTask(task) {
         const taskId = task.getId();
-        const taskIndex = this.#tasks.findIndex((thisTask) => {
-            return thisTask.getId() === taskId;
-        });
+        const taskIndex = this.getTaskIndexById(taskId);
         this.#tasks.splice(taskIndex, 1);
+    }
+
+    //Updates a task!
+    updateTask(taskId, taskInfo) {
+        const task = this.getTaskById(taskId);
+        task.updateSelf(taskInfo);
     }
 
     // Updates title and description
@@ -116,4 +141,5 @@ export default class Project {
         this.#title = title;
         this.#description = description;
     }
+
 }

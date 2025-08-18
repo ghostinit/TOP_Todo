@@ -104,6 +104,11 @@ const DataManager = (
             clearData(storageKey);
         }
 
+        const deleteTask = (selectedIndex, taskId) => {
+            user_data[selectedIndex].deleteTaskById(taskId);
+            saveUserData();
+        }
+
         const fetchStoredData = () => {
             // Check if local storage is even available
             let data = {};
@@ -129,6 +134,11 @@ const DataManager = (
                 // Unable to save locally, return starter project anyway
                 buildStarterData();
             }
+        }
+
+        const getTaskFromProject = (selectedIndex, taskId) => {
+            const project = user_data[selectedIndex];
+            return project.getTaskById(taskId);
         }
 
         // Fetches an array containing object literals of all tasks
@@ -162,6 +172,10 @@ const DataManager = (
         // Fetches a projects title and description by its position in user_data
         const getProjectTitleAndDescByIdx = (idx) => {
             return user_data[idx].getTitleAndDesc();
+        }
+
+        const getTaskTitleById = (selectedIndex, taskId) => {
+            return user_data[selectedIndex].getTaskTitle(taskId);
         }
 
         // Saves user data
@@ -224,6 +238,12 @@ const DataManager = (
             return user_data.length;
         }
 
+        const updateTask = (selectedIndex, taskId, taskInfo) => {
+            const project = user_data[selectedIndex];
+            project.updateTask(taskId, taskInfo);
+            saveUserData();
+        }
+
         return {
             priorityNames,
             priorityColors,
@@ -233,6 +253,7 @@ const DataManager = (
             buildStarterData,
             clearAllData,
             deleteProject,
+            deleteTask,
             fetchStoredData,
             getProjectCount,
             getProjectIdByIdx,
@@ -240,9 +261,12 @@ const DataManager = (
             getProjectTasks,
             getProjectTitleAndDescByIdx,
             getProjectTitlesAndIds,
+            getTaskFromProject,
+            getTaskTitleById,
             saveUserData,
             toggleTaskComplete,
-            updateProject
+            updateProject,
+            updateTask
         }
     }
 )();
